@@ -21,7 +21,7 @@ if mu.begin_window(ctx, "My Window", mu.Rect(x:10, y:10, w:140, h:86))!=0:
 
   mu.label(ctx, "First:");
   if mu.button(ctx, "Button1")!=0:
-    echo "Button1 pressed\n"
+    echo "Button1 pressed"
 
   mu.label(ctx, "Second:");
   if mu.button(ctx, "Button2")!=0:
