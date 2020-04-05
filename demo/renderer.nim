@@ -16,14 +16,8 @@ var
 
 proc r_init =
   window = createWindow(nil, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL)
-  #discard glSetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  #discard glSetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-  #discard glSetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-  #window = createWindow(nil, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL)
-  #if window == nil: echo "init error"
   loadExtensions()
   discard glCreateContext(window)
-  #echo glIsEnabled(GL_BLEND).int
   glEnable(GL_BLEND)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
   glDisable(GL_CULL_FACE)
@@ -113,7 +107,6 @@ proc r_draw_rect(rect: mu.Rect, color: mu.Color) =
   push_quad(rect, atlas[ATLAS_WHITE], color)
 
 proc r_draw_text(p: cstring, pos:mu.Vec2, color: mu.Color) =
-  #echo "draw_text in"
   var
     dst = mu.Rect(x:pos.x, y:pos.y, w:0, h:0)
     chr: int
@@ -127,7 +120,6 @@ proc r_draw_text(p: cstring, pos:mu.Vec2, color: mu.Color) =
       dst.h = src.h
       push_quad(dst, src, color)
       dst.x += dst.w
-  #echo "draw_text out"
 
 proc r_draw_icon(id:int, rect:mu.Rect, color:mu.Color) =
   if atlas.hasKey(id):
@@ -138,8 +130,6 @@ proc r_draw_icon(id:int, rect:mu.Rect, color:mu.Color) =
     push_quad(mu.Rect(x:x,y:y,w:src.w,h:src.h), src, color)
 
 proc r_get_text_width(p: cstring, len:int): cint =
-  #echo "get_text_width in"
-  #if p.len < 1: return
   var
     chr: int
   for i in 0..<len:
@@ -147,7 +137,6 @@ proc r_get_text_width(p: cstring, len:int): cint =
     chr = mu.min(p[i].uint8, 127).int + ATLAS_FONT
     if atlas.hasKey(chr):
       result += atlas[chr].w
-  #echo "get_text_width out"
 
 proc r_get_text_height:cint = 18
 

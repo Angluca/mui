@@ -893,7 +893,7 @@ var atlas_texture = [
 ]
 
 var atlas = {
-  ICON_CLOSE : Rect( x:88, y:68, w:16, h:16 ),
+  ICON_CLOSE : Rect(x:88,y:68,w:16,h:16),
   ICON_CHECK : Rect(x:0,y:0,w:18,h:18),
   ICON_EXPANDED : Rect(x:118,y:68,w:7,h:5),
   ICON_COLLAPSED : Rect(x:113,y:68,w:5,h:7),

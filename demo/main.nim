@@ -3,11 +3,10 @@ include renderer
 var
   logbuf: string
   logbuf_updated = false
-  bg = [90.Real, 95, 100]#mu.Color(r:90.char, g:95.char, b:100.char, a:255.char)
+  bg = [90.Real, 95, 100]
 
 type PContext = ptr Context
 proc wlog(text: cstring) =
-  #echo logbuf.len
   if logbuf.len > 2048: logbuf = ""
   if logbuf.len>0: logbuf.add '\n'
   logbuf.add text
@@ -81,7 +80,6 @@ proc test_window(ctx: PContext) =
       mu.layout_begin_column(ctx)
       var v2 {.global.} = [-1.cint]
       mu.layout_row(ctx, 1, v2[0].addr, 0)
-      #mu.text(ctx, "xxxxxxxxx oooooooooo -. -...  ooooo xxxxxx ...- .- xoxoxoxoxoxoxoxoxoxoxoxoxoxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -.-!!!")
       mu.text(ctx, "Lorem ipsum dolor sit amet, consectetur adipiscing \nelit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus \nipsum, eu varius magna felis a nulla.")
       mu.layout_end_column(ctx)
 
@@ -117,7 +115,6 @@ proc log_window(ctx: PContext) =
       logbuf_updated = false
 
     var
-      #buf :cstring
       buf {.global.}: array[128, char]
       bsub = false
       v2 {.global.} = [-70.cint, -1]
@@ -181,7 +178,6 @@ const key_map = {
 }.totable
 
 proc text_width(font: Font; text: cstring; len: cint): cint {. cdecl.} =
-  #echo len, "text:", text.len, text
   var n = len
   if n == -1: n = text.len.cint
   return r_get_text_width(text, n)
@@ -225,7 +221,7 @@ proc main =
           mu.input_keydown(ctx, b)
         if (b!=0) and (e.kind == KEYUP):
           mu.input_keyup(ctx, b)
-      else: discard #wlog("unknow sdl kind!")
+      else: discard
 
     process_frame(ctx)
 
@@ -240,6 +236,5 @@ proc main =
       else: discard
 
     r_present()
-  #sdl.destroy(window)
   sdl.quit()
 main()
