@@ -138,14 +138,15 @@ template uint8_slider(ctx: typed, val: typed, low:typed, high:typed): untyped  =
   mu.pop_id(ctx)
   ret
 
+var colors = [ "text:", "border:", "windowbg:", "titlebg:", "titletext:", "panelbg:", "button:", "buttonhover:", "buttonfocus:", "base:", "basehover:", "basefocus:", "scrollbase:", "scrollthumb:" ]
 proc style_window(ctx: PContext) =
   if mu.begin_window(ctx, "style editor", mu.rect(350, 250, 300, 240))!=0:
     var
       sw = (mu.get_current_container(ctx).body.w.float * 0.14).cint
       v = [80.cint, sw, sw, sw, sw, -1]
     mu.layout_row(ctx, 6, v[0].addr, 0)
-    for i in 0..<14:
-      mu.label(ctx, $i)
+    for i, v in colors:
+      mu.label(ctx, v)
       discard uint8_slider(ctx, ctx.style.colors[i].r.addr, 0, 255)
       discard uint8_slider(ctx, ctx.style.colors[i].g.addr, 0, 255)
       discard uint8_slider(ctx, ctx.style.colors[i].b.addr, 0, 255)
