@@ -106,6 +106,8 @@ const
   KEY_BACKSPACE* = (1 shl 3)
   KEY_RETURN* = (1 shl 4)
 
+{.push warnings: off.}
+
 type
   Id* = cuint
   Real* = cfloat
@@ -244,8 +246,7 @@ type
     key_pressed* {.importc: "key_pressed".}: cint
     input_text* {.importc: "input_text".}: array[32, char]
 
-
-## {.push importc.}
+{.pop.}
 
 proc vec2*(x: cint; y: cint): Vec2 {.cdecl, importc: "mu_vec2", mui.}
 proc rect*(x: cint; y: cint; w: cint; h: cint): Rect {.cdecl, importc: "mu_rect",
@@ -392,4 +393,4 @@ proc end_popup*(ctx: ptr Context) {.cdecl, importc: "mu_end_popup", mui.}
 proc begin_panel_ex*(ctx: ptr Context; name: cstring; opt: cint) {.cdecl,
     importc: "mu_begin_panel_ex", mui.}
 proc end_panel*(ctx: ptr Context) {.cdecl, importc: "mu_end_panel", mui.}
-## {.pop.}
+

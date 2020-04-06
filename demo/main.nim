@@ -129,17 +129,16 @@ proc log_window(ctx: PContext) =
 
     mu.end_window(ctx)
 
-template uint8_slider(ctx: typed, val: typed, low:typed, high:typed): untyped  =
+proc uint8_slider(ctx: PContext, val: ptr cuchar, low:int, high:int): int  =
   var tmp {.global.}: Real
-  mu.push_id(ctx, val.ptr, sizeof(val).cint)
+  mu.push_id(ctx, val.unsafeAddr, sizeof(val).cint)
   tmp = val[].Real
-  var ret = mu.slider_ex(ctx, tmp.addr, low.Real, high.Real, 0.Real, "%.0f", OPT_ALIGNCENTER)
+  result = mu.slider_ex(ctx, tmp.addr, low.Real, high.Real, 0.Real, "%.0f", OPT_ALIGNCENTER)
   val[] = tmp.cuchar
   mu.pop_id(ctx)
-  ret
 
-var colors = [ "text:", "border:", "windowbg:", "titlebg:", "titletext:", "panelbg:", "button:", "buttonhover:", "buttonfocus:", "base:", "basehover:", "basefocus:", "scrollbase:", "scrollthumb:" ]
 proc style_window(ctx: PContext) =
+  var colors {.global.} = [ "text:", "border:", "windowbg:", "titlebg:", "titletext:", "panelbg:", "button:", "buttonhover:", "buttonfocus:", "base:", "basehover:", "basefocus:", "scrollbase:", "scrollthumb:" ]
   if mu.begin_window(ctx, "style editor", mu.rect(350, 250, 300, 240))!=0:
     var
       sw = (mu.get_current_container(ctx).body.w.float * 0.14).cint
