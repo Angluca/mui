@@ -45,7 +45,6 @@ if mu.begin_window(ctx, "My Window", mu.rect(10, 10, 140, 86))!=0:
 [**Browser Demo**](https://floooh.github.io/sokol-html5/sgl-microui-sapp.html)
 
 ## Usage
-* See [`doc/usage.md`](doc/usage.md) for usage instructions
 * See the [`demo`](demo) directory for a usage example
 
 ## Notes
