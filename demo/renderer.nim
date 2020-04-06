@@ -108,7 +108,7 @@ proc r_draw_rect(rect: mu.Rect, color: mu.Color) =
 
 proc r_draw_text(p: cstring, pos:mu.Vec2, color: mu.Color) =
   var
-    dst = mu.Rect(x:pos.x, y:pos.y, w:0, h:0)
+    dst = mu.rect(pos.x, pos.y, 0, 0)
     chr: int
     src: mu.Rect
   for i,v in p:
@@ -127,7 +127,7 @@ proc r_draw_icon(id:int, rect:mu.Rect, color:mu.Color) =
       src = atlas[id]
       x = rect.x + ((rect.w-src.w)/2).cint
       y = rect.y + ((rect.h-src.h)/2).cint
-    push_quad(mu.Rect(x:x,y:y,w:src.w,h:src.h), src, color)
+    push_quad(mu.rect(x,y,src.w,src.h), src, color)
 
 proc r_get_text_width(p: cstring, len:int): cint =
   var

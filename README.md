@@ -19,7 +19,8 @@ Copy by [**rxi/microui**](https://github.com/rxi/microui)
 ![example](https://user-images.githubusercontent.com/3920290/75187058-2b598800-5741-11ea-9358-38caf59f8791.png)
 ```nim
 import mui as mu
-if mu.begin_window(ctx, "My Window", mu.Rect(x:10, y:10, w:140, h:86))!=0:
+#if mu.begin_window(ctx, "My Window", mu.Rect(x:10, y:10, w:140, h:86))!=0:
+if mu.begin_window(ctx, "My Window", mu.rect(10, 10, 140, 86))!=0:
   var v {.global.} = [60.cint, -1]
   mu.layout_row(ctx, 2, v[0].addr, 0);
 

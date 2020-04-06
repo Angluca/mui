@@ -17,7 +17,7 @@ proc test_window(ctx: PContext) =
   var
     win: ptr Container
     buf: string
-  if mu.begin_window(ctx, "demo win", mu.Rect(x:40,y:40,w:300,h:450))!=0:
+  if mu.begin_window(ctx, "demo win", mu.rect(40,40,300,450))!=0:
     win = get_current_container(ctx)
     win.rect.w = mu.max(win.rect.w, 240)
     win.rect.h = mu.max(win.rect.h, 300)
@@ -96,13 +96,13 @@ proc test_window(ctx: PContext) =
       mu.layout_end_column(ctx)
 
       var r = mu.layout_next(ctx)
-      mu.draw_rect(ctx, r, mu.Color(r:bg[0].char, g:bg[1].char, b:bg[2].char, a:255.char))
+      mu.draw_rect(ctx, r, mu.color(bg[0].cint, bg[1].cint, bg[2].cint, 255.cint))
       var buf = $bg[0].int & "," & $bg[1].int & "," & $bg[2].int
       mu.draw_control_text(ctx, buf[0].addr, r, COLOR_TEXT, OPT_ALIGNCENTER)
     mu.end_window(ctx)
 
 proc log_window(ctx: PContext) =
-  if mu.begin_window(ctx, "log win", mu.Rect(x:350, y:40, w:300, h:200))!=0:
+  if mu.begin_window(ctx, "log win", mu.rect(350, 40, 300, 200))!=0:
     var v {.global.} = [-1.cint]
     mu.layout_row(ctx, 1, v[0].addr, -25)
     mu.begin_panel(ctx, "log output")
@@ -139,7 +139,7 @@ template uint8_slider(ctx: typed, val: typed, low:typed, high:typed): untyped  =
   ret
 
 proc style_window(ctx: PContext) =
-  if mu.begin_window(ctx, "style editor", mu.Rect(x:350, y:250, w:300, h:240))!=0:
+  if mu.begin_window(ctx, "style editor", mu.rect(350, 250, 300, 240))!=0:
     var
       sw = (mu.get_current_container(ctx).body.w.float * 0.14).cint
       v = [80.cint, sw, sw, sw, sw, -1]
@@ -225,7 +225,7 @@ proc main =
 
     process_frame(ctx)
 
-    r_clear(mu.Color(r:bg[0].char, g:bg[1].char, b:bg[2].char, a:255.char))
+    r_clear(mu.color(bg[0].cint, bg[1].cint, bg[2].cint, 255.cint))
     var cmd: ptr mu.Command = nil
     while mu.next_command(ctx, cmd.addr) != 0:
       case cmd.typec:
