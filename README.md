@@ -13,7 +13,7 @@ Copy by [**rxi/microui**](https://github.com/rxi/microui)
 
 ### Installation
 ```sh
-> nimble install mui
+> nimble install mui -y
 ```
 ## Example
 ![example](https://user-images.githubusercontent.com/3920290/75187058-2b598800-5741-11ea-9358-38caf59f8791.png)
