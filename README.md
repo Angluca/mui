@@ -11,6 +11,10 @@ Copy by [**rxi/microui**](https://github.com/rxi/microui)
 * Designed to allow the user to easily add custom controls
 * Simple layout system
 
+### Installation
+```sh
+> nimble install mui
+```
 ## Example
 ![example](https://user-images.githubusercontent.com/3920290/75187058-2b598800-5741-11ea-9358-38caf59f8791.png)
 ```nim
