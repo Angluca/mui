@@ -12,7 +12,7 @@ from strutils import replace
 template Stack* (T:typedesc, n:int): untyped=
   tuple[idx:int, items:array[n, T]]
 const
-  VERSION* = "2.01"
+  VERSION* = "2.02"
   COMMANDLIST_SIZE* = (256 * 1024)
   ROOTLIST_SIZE* = 32
   CONTAINERSTACK_SIZE* = 32
