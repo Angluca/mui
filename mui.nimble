@@ -5,10 +5,17 @@ author        = "Angluca"
 description   = "A tiny immediate-mode UI library"
 license       = "MIT"
 
-installDirs = @["src","demo"]
-installFiles = @["mui.nim"]
+installDirs = @["src"]
 
 # Dependencies
 
 requires "nim >= 0.19.4"
 
+task test, "Run demo":
+  echo "================================"
+  echo "If you want build demo:"
+  echo "require [nimble install sdl2]"
+  echo "require [nimble install opengl]"
+  echo "require [sdl2 library]"
+  echo "================================"
+  exec "nim c -d:release -r demo/main.nim"

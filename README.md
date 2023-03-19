@@ -1,7 +1,8 @@
 # ![microui](https://user-images.githubusercontent.com/3920290/75171571-be83c500-5723-11ea-8a50-504cc2ae1109.png)
 A *tiny*, portable, immediate-mode UI library written in ANSI C
 
-Copy [**rxi/microui**](https://github.com/rxi/microui)
+Copy [**rxi/microui**](https://github.com/rxi/microui)  
+Use it with nim language.
 ## Features
 * Tiny: around `1100 sloc` of ANSI C
 * Works within a fixed-sized memory region: no additional memory is allocated
@@ -13,8 +14,16 @@ Copy [**rxi/microui**](https://github.com/rxi/microui)
 
 ### Installation
 ```sh
-> nimble install mui -y
+nimble install
+nimble test
+<!--or -->
+nimble install sdl2 opengl
+nim c -r demo/main.nim
 ```
+If you want build demo must  
+nimble install sdl2 opengl  
+And sdl2 library
+
 ## Example
 ![example](https://user-images.githubusercontent.com/3920290/75187058-2b598800-5741-11ea-9358-38caf59f8791.png)
 ```nim

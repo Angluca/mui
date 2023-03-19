@@ -1,14 +1,14 @@
 ##
 ## * Copyright (c) 2020 rxi
-## *
+## * Modified by Angluca
 ## * This library is free software; you can redistribute it and/or modify it
 ## * under the terms of the MIT license. See `microui.c` for details.
 ##
 
-import strutils
+from strutils import replace
 {.pragma: mui, header: currentSourcePath().replace("\\", "/")[0..^8] & "/src/microui.h"}
-{.compile: "./src/microui.c", passC: "-Wall -c -O3".}
-{.deadCodeElim: on.}
+#{.compile: "./src/microui.c", passC: "-Wall -c -O3".}
+{.compile: "./src/microui.c".}
 template Stack* (T:typedesc, n:int): untyped=
   tuple[idx:int, items:array[n, T]]
 const
@@ -123,10 +123,10 @@ type
     h* {.importc: "h".}: cint
 
   Color* {.importc: "mu_Color", mui, bycopy.} = object
-    r* {.importc: "r".}: cuchar
-    g* {.importc: "g".}: cuchar
-    b* {.importc: "b".}: cuchar
-    a* {.importc: "a".}: cuchar
+    r* {.importc: "r".}: uint8
+    g* {.importc: "g".}: uint8
+    b* {.importc: "b".}: uint8
+    a* {.importc: "a".}: uint8
 
   PoolItem* {.importc: "mu_PoolItem", mui, bycopy.} = object
     id* {.importc: "id".}: Id
@@ -162,7 +162,7 @@ type
     id* {.importc: "id".}: cint
     color* {.importc: "color".}: Color
 
-  Command* {.importc: "mu_Command", mui, bycopy.} = object {.union.}
+  Command* {.importc: "mu_Command", mui, bycopy, union.} = object
     typec* {.importc: "type".}: cint
     base* {.importc: "base".}: BaseCommand
     jump* {.importc: "jump".}: JumpCommand

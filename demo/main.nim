@@ -27,9 +27,9 @@ proc test_window(ctx: PContext) =
       var v {.global.} = [54.cint, -1]
       mu.layout_row(ctx, 2,v[0].addr, 0)
       mu.label(ctx, "position:")
-      buf = $win.rect.x & "," & $win.rect.y; mu.label(ctx, buf)
+      buf = $win.rect.x & "," & $win.rect.y; mu.label(ctx, buf.cstring)
       mu.label(ctx, "size:")
-      buf = $win.rect.w & "," & $win.rect.h; mu.label(ctx, buf)
+      buf = $win.rect.w & "," & $win.rect.h; mu.label(ctx, buf.cstring)
 
     if mu.header_ex(ctx, "test buttons", OPT_EXPANDED)!=0:
       var v {.global.} = [86.cint, -110, -1]
@@ -98,7 +98,7 @@ proc test_window(ctx: PContext) =
       var r = mu.layout_next(ctx)
       mu.draw_rect(ctx, r, mu.color(bg[0].cint, bg[1].cint, bg[2].cint, 255.cint))
       var buf = $bg[0].int & "," & $bg[1].int & "," & $bg[2].int
-      mu.draw_control_text(ctx, buf[0].addr, r, COLOR_TEXT, OPT_ALIGNCENTER)
+      mu.draw_control_text(ctx, buf.cstring, r, COLOR_TEXT, OPT_ALIGNCENTER)
     mu.end_window(ctx)
 
 proc log_window(ctx: PContext) =
@@ -108,33 +108,34 @@ proc log_window(ctx: PContext) =
     mu.begin_panel(ctx, "log output")
     var panel = mu.get_current_container(ctx)
     mu.layout_row(ctx, 1, v[0].addr, -1)
-    mu.text(ctx, logbuf)
+    mu.text(ctx, logbuf.cstring)
     mu.end_panel(ctx)
     if logbuf_updated:
       panel.scroll.y = panel.content_size.y
       logbuf_updated = false
 
     var
-      buf {.global.}: array[128, char]
+      buf0 {.global.}: array[128, char]
+      buf: cstring = cast[cstring](buf0.addr)
       bsub = false
       v2 {.global.} = [-70.cint, -1]
     mu.layout_row(ctx, 2, v2[0].addr, 0)
-    if (mu.textbox(ctx, buf.unsafeAddr, buf.high) and RES_SUBMIT) != 0:
+    if (mu.textbox(ctx, buf, buf0.high) and RES_SUBMIT) != 0:
       mu.set_focus(ctx, ctx.last_id)
       bsub = true
     if mu.button(ctx, "submit") != 0: bsub = true
     if bsub:
-      wlog(buf.unsafeAddr)
-      buf[0] = '\0'
+      wlog(buf)
+      zeroMem(buf, buf.len)
 
     mu.end_window(ctx)
 
-proc uint8_slider(ctx: PContext, val: ptr cuchar, low:int, high:int): int  =
+proc uint8_slider(ctx: PContext, val: ptr uint8, low:int, high:int): int  =
   var tmp {.global.}: Real
   mu.push_id(ctx, val.unsafeAddr, sizeof(val).cint)
   tmp = val[].Real
   result = mu.slider_ex(ctx, tmp.addr, low.Real, high.Real, 0.Real, "%.0f", OPT_ALIGNCENTER)
-  val[] = tmp.cuchar
+  val[] = tmp.uint8
   mu.pop_id(ctx)
 
 proc style_window(ctx: PContext) =
@@ -145,7 +146,7 @@ proc style_window(ctx: PContext) =
       v = [80.cint, sw, sw, sw, sw, -1]
     mu.layout_row(ctx, 6, v[0].addr, 0)
     for i, v in colors:
-      mu.label(ctx, v)
+      mu.label(ctx, v.cstring)
       discard uint8_slider(ctx, ctx.style.colors[i].r.addr, 0, 255)
       discard uint8_slider(ctx, ctx.style.colors[i].g.addr, 0, 255)
       discard uint8_slider(ctx, ctx.style.colors[i].b.addr, 0, 255)
@@ -206,7 +207,7 @@ proc main =
       of QuitEvent: bRun = false; break
       of MOUSEMOTION: mu.input_mousemove(ctx, e.motion.x, e.motion.y)
       of MOUSEWHEEL: mu.input_scroll(ctx, 0, e.wheel.y * -30)
-      of TEXTINPUT: mu.input_text(ctx, e.text.text.unsafeAddr)
+      of TEXTINPUT: mu.input_text(ctx, cast[cstring](e.text.text.addr))
       of MOUSEBUTTONDOWN, MOUSEBUTTONUP:
         if button_map.hasKey(e.button.button and 0xff):
           b = button_map[e.button.button and 0xff].cint
@@ -229,7 +230,7 @@ proc main =
     var cmd: ptr mu.Command = nil
     while mu.next_command(ctx, cmd.addr) != 0:
       case cmd.typec:
-      of COMMAND_TEXT: r_draw_text(cmd.text.str[0].addr, cmd.text.pos, cmd.text.color)
+      of COMMAND_TEXT: r_draw_text(cast[cstring](cmd.text.str[0].addr), cmd.text.pos, cmd.text.color)
       of COMMAND_RECT: r_draw_rect(cmd.rect.rect, cmd.rect.color)
       of COMMAND_ICON: r_draw_icon(cmd.icon.id, cmd.icon.rect, cmd.icon.color)
       of COMMAND_CLIP: r_set_clip_rect(cmd.clip.rect)
