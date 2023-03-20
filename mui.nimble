@@ -1,11 +1,11 @@
 # Package
 
-version       = "2.0.2"
+version       = "2.0.1"
 author        = "Angluca"
 description   = "A tiny immediate-mode UI library"
 license       = "MIT"
 
-installDirs = @["src"]
+installDirs = @["src", "doc"]
 
 # Dependencies
 

@@ -12,7 +12,7 @@ from strutils import replace
 template Stack* (T:typedesc, n:int): untyped=
   tuple[idx:int, items:array[n, T]]
 const
-  VERSION* = "2.02"
+  VERSION* = "2.01"
   COMMANDLIST_SIZE* = (256 * 1024)
   ROOTLIST_SIZE* = 32
   CONTAINERSTACK_SIZE* = 32
@@ -393,4 +393,21 @@ proc end_popup*(ctx: ptr Context) {.cdecl, importc: "mu_end_popup", mui.}
 proc begin_panel_ex*(ctx: ptr Context; name: cstring; opt: cint) {.cdecl,
     importc: "mu_begin_panel_ex", mui.}
 proc end_panel*(ctx: ptr Context) {.cdecl, importc: "mu_end_panel", mui.}
+
+type
+  PVec2* = ptr Vec2
+  PRect* = ptr Rect
+  PColor* = ptr Color
+  PPoolItem* = ptr PoolItem
+  PBaseCommand* = ptr BaseCommand
+  PJumpCommand* = ptr JumpCommand
+  PClipCommand* = ptr ClipCommand
+  PRectCommand* = ptr RectCommand
+  PTextCommand* = ptr TextCommand
+  PIconCommand* = ptr IconCommand
+  PCommand* = ptr Command
+  PLayout* = ptr Layout
+  PContainer* = ptr Container
+  PStyle* = ptr Style
+  PContext* = ptr Context
 

@@ -5,7 +5,7 @@ var
   logbuf_updated = false
   bg = [90.Real, 95, 100]
 
-type PContext = ptr Context
+#type PContext = ptr Context
 proc wlog(text: cstring) =
   if logbuf.len > 2048: logbuf = ""
   if logbuf.len>0: logbuf.add '\n'
@@ -24,7 +24,7 @@ proc test_window(ctx: PContext) =
 
     if mu.header(ctx, "win info")!=0:
       win = get_current_container(ctx)
-      var v {.global.} = [54.cint, -1]
+      let v {.global.} = [54.cint, -1]
       mu.layout_row(ctx, 2,v[0].addr, 0)
       mu.label(ctx, "position:")
       buf = $win.rect.x & "," & $win.rect.y; mu.label(ctx, buf.cstring)
@@ -32,7 +32,7 @@ proc test_window(ctx: PContext) =
       buf = $win.rect.w & "," & $win.rect.h; mu.label(ctx, buf.cstring)
 
     if mu.header_ex(ctx, "test buttons", OPT_EXPANDED)!=0:
-      var v {.global.} = [86.cint, -110, -1]
+      let v {.global.} = [86.cint, -110, -1]
       mu.layout_row(ctx, 3, v[0].addr, 0)
       mu.label(ctx, "test btn1:")
       if mu.button(ctx, "btn1:")!=0: wlog("pres btn1")
@@ -46,7 +46,7 @@ proc test_window(ctx: PContext) =
         mu.end_popup(ctx)
 
     if mu.header_ex(ctx, "tree and text", OPT_EXPANDED)!=0:
-      var v {.global.} = [140.cint, -1]
+      let v {.global.} = [140.cint, -1]
       mu.layout_row(ctx, 2, v[0].addr, 0)
       mu.layout_begin_column(ctx)
       if mu.begin_treenode(ctx, "test 1")!=0:
@@ -61,7 +61,7 @@ proc test_window(ctx: PContext) =
         mu.end_treenode(ctx)
 
       if mu.begin_treenode(ctx, "test 2")!=0:
-        var v {.global.} = [54.cint, 54]
+        let v {.global.} = [54.cint, 54]
         mu.layout_row(ctx, 2, v[0].addr, 0)
         if mu.button(ctx, "tbtn3:")!=0: wlog("pres tbtn3")
         if mu.button(ctx, "tbtn4:")!=0: wlog("pres tbtn4")
@@ -70,7 +70,7 @@ proc test_window(ctx: PContext) =
         mu.end_treenode(ctx)
 
       if mu.begin_treenode(ctx, "test 3")!=0:
-        var chks {.global.} = [1.cint, 0, 1]
+        let chks {.global.} = [1.cint, 0, 1]
         discard mu.checkbox(ctx, "chkbox1", chks[0].addr)
         discard mu.checkbox(ctx, "chkbox1", chks[1].addr)
         discard mu.checkbox(ctx, "chkbox1", chks[2].addr)
@@ -78,17 +78,17 @@ proc test_window(ctx: PContext) =
       mu.layout_end_column(ctx)
 
       mu.layout_begin_column(ctx)
-      var v2 {.global.} = [-1.cint]
+      let v2 {.global.} = [-1.cint]
       mu.layout_row(ctx, 1, v2[0].addr, 0)
       mu.text(ctx, "Lorem ipsum dolor sit amet, consectetur adipiscing \nelit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus \nipsum, eu varius magna felis a nulla.")
       mu.layout_end_column(ctx)
 
     if mu.header_ex(ctx, "bg color", OPT_EXPANDED)!=0:
-      var v {.global.} = [-78.cint, -1]
+      let v {.global.} = [-78.cint, -1]
       mu.layout_row(ctx, 2, v[0].addr, 74)
 
       mu.layout_begin_column(ctx)
-      var v2 {.global.} = [46.cint, -1]
+      let v2 {.global.} = [46.cint, -1]
       mu.layout_row(ctx, 2, v2[0].addr, 0)
       mu.label(ctx, "red:"); discard mu.slider(ctx, bg[0].addr, 0.Real, 255.Real)
       mu.label(ctx, "green:"); discard mu.slider(ctx, bg[1].addr, 0.Real, 255.Real)
@@ -103,7 +103,7 @@ proc test_window(ctx: PContext) =
 
 proc log_window(ctx: PContext) =
   if mu.begin_window(ctx, "log win", mu.rect(350, 40, 300, 200))!=0:
-    var v {.global.} = [-1.cint]
+    let v {.global.} = [-1.cint]
     mu.layout_row(ctx, 1, v[0].addr, -25)
     mu.begin_panel(ctx, "log output")
     var panel = mu.get_current_container(ctx)
@@ -132,14 +132,14 @@ proc log_window(ctx: PContext) =
 
 proc uint8_slider(ctx: PContext, val: ptr uint8, low:int, high:int): int  =
   var tmp {.global.}: Real
-  mu.push_id(ctx, val.unsafeAddr, sizeof(val).cint)
+  mu.push_id(ctx, val.addr, sizeof(val).cint)
   tmp = val[].Real
   result = mu.slider_ex(ctx, tmp.addr, low.Real, high.Real, 0.Real, "%.0f", OPT_ALIGNCENTER)
   val[] = tmp.uint8
   mu.pop_id(ctx)
 
 proc style_window(ctx: PContext) =
-  var colors {.global.} = [ "text:", "border:", "windowbg:", "titlebg:", "titletext:", "panelbg:", "button:", "buttonhover:", "buttonfocus:", "base:", "basehover:", "basefocus:", "scrollbase:", "scrollthumb:" ]
+  let colors {.global.} = [ "text:", "border:", "windowbg:", "titlebg:", "titletext:", "panelbg:", "button:", "buttonhover:", "buttonfocus:", "base:", "basehover:", "basefocus:", "scrollbase:", "scrollthumb:" ]
   if mu.begin_window(ctx, "style editor", mu.rect(350, 250, 300, 240))!=0:
     var
       sw = (mu.get_current_container(ctx).body.w.float * 0.14).cint
