@@ -5,7 +5,7 @@ author        = "Angluca"
 description   = "A tiny immediate-mode UI library"
 license       = "MIT"
 
-installDirs = @["src", "doc"]
+installDirs = @["src"]
 
 # Dependencies
 
