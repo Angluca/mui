@@ -7,8 +7,8 @@
 
 from strutils import replace
 {.pragma: mui, header: "src/microui.h"}
-const dirPath = currentSourcePath().replace("\\", "/")[0..^8]
-{.compile: "src/microui.c", passC: "-I" & dirPath.}
+const muiDir = currentSourcePath().replace("\\", "/")[0..^8]
+{.compile: "src/microui.c", passC: "-I" & muiDir.}
 
 template Stack* (T:typedesc, n:int): untyped=
   tuple[idx:int, items:array[n, T]]
