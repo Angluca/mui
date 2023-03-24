@@ -9,7 +9,7 @@ installDirs = @["src"]
 
 # Dependencies
 
-requires "nim >= 0.19.4"
+requires "nim >= 0.20.0"
 
 taskRequires "test", "sdl2"
 taskRequires "test", "opengl"
