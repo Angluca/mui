@@ -24,7 +24,7 @@ nimble test
 import mui as mu
 #if ctx.begin_window("My Window", mu.Rect(x:10, y:10, w:140, h:86))!=0:
 if ctx.begin_window("My Window", mu.rect(10, 10, 140, 86))!=0:
-  var v {.global.} = [60.cint, -1]
+  var v = [60.cint, -1]
   ctx.layout_row(2, v[0].addr, 0);
 
   ctx.label("First:");
