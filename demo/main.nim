@@ -207,6 +207,7 @@ proc main =
       of QuitEvent: bRun = false; break
       of MOUSEMOTION: ctx.input_mousemove(e.motion.x, e.motion.y)
       of MOUSEWHEEL: ctx.input_scroll(0, e.wheel.y * -30)
+      #of TEXTINPUT: ctx.input_text(cast[cstring](e.text.text.addr))
       of TEXTINPUT: input_text(ctx, cast[cstring](e.text.text.addr))
       of MOUSEBUTTONDOWN, MOUSEBUTTONUP:
         if button_map.hasKey(e.button.button and 0xff):
