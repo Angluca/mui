@@ -28,11 +28,11 @@ if ctx.begin_window("My Window", mu.rect(10, 10, 140, 86))!=0:
   ctx.layout_row(2, v[0].addr, 0);
 
   ctx.label("First:");
-  if ctx.button("Button1")!=0:
+  if mu.button(ctx, "Button1")!=0: # c call func
     echo "Button1 pressed"
 
   ctx.label("Second:");
-  if ctx.button("Button2")!=0:
+  if ctx.button("Button2")!=0: # OOP call func
     ctx.open_popup("My Popup")
 
   if ctx.begin_popup("My Popup")!=0:
