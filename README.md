@@ -16,36 +16,30 @@ Use it with nim language.
 ```sh
 nimble install
 nimble test
-<!--or -->
-nimble install sdl2 opengl
-nim c -r demo/main.nim
 ```
-If you want build demo must  
-nimble install sdl2 opengl  
-And sdl2 library
 
 ## Example
 ![example](https://user-images.githubusercontent.com/3920290/75187058-2b598800-5741-11ea-9358-38caf59f8791.png)
 ```nim
 import mui as mu
-#if mu.begin_window(ctx, "My Window", mu.Rect(x:10, y:10, w:140, h:86))!=0:
-if mu.begin_window(ctx, "My Window", mu.rect(10, 10, 140, 86))!=0:
+#if ctx.begin_window("My Window", mu.Rect(x:10, y:10, w:140, h:86))!=0:
+if ctx.begin_window("My Window", mu.rect(10, 10, 140, 86))!=0:
   var v {.global.} = [60.cint, -1]
-  mu.layout_row(ctx, 2, v[0].addr, 0);
+  ctx.layout_row(2, v[0].addr, 0);
 
-  mu.label(ctx, "First:");
-  if mu.button(ctx, "Button1")!=0:
+  ctx.label("First:");
+  if ctx.button("Button1")!=0:
     echo "Button1 pressed"
 
-  mu.label(ctx, "Second:");
-  if mu.button(ctx, "Button2")!=0:
-    mu.open_popup(ctx, "My Popup")
+  ctx.label("Second:");
+  if ctx.button("Button2")!=0:
+    ctx.open_popup("My Popup")
 
-  if mu.begin_popup(ctx, "My Popup")!=0:
-    mu.label(ctx, "Hello world!")
-    mu.end_popup(ctx)
+  if ctx.begin_popup("My Popup")!=0:
+    ctx.label("Hello world!")
+    ctx.end_popup()
 
-  mu.end_window(ctx)
+  ctx.end_window()
 ```
 
 ## Screenshot
