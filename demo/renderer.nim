@@ -6,18 +6,21 @@ const
   BUFFER_SIZE = 16384
   WIDTH = 800
   HEIGHT = 600
+
 var
   tex_buf : array[BUFFER_SIZE * 8, GL_Float]
   vert_buf: array[BUFFER_SIZE * 8, GL_Float]
   color_buf: array[BUFFER_SIZE * 16, GLubyte]
   index_buf: array[BUFFER_SIZE * 6, GLuint]
   window: WindowPtr = nil
-  buf_idx = 0.int
+  buf_idx: int
 
 proc r_init =
+  # init SDL window
   window = createWindow(nil, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WIDTH, HEIGHT, SDL_WINDOW_OPENGL)
-  loadExtensions()
   discard glCreateContext(window)
+
+  # init gl
   glEnable(GL_BLEND)
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
   glDisable(GL_CULL_FACE)
@@ -28,6 +31,7 @@ proc r_init =
   glEnableClientState(GL_TEXTURE_COORD_ARRAY)
   glEnableClientState(GL_COLOR_ARRAY)
 
+  # init texture
   var id: GLuint
   glGenTextures(1, id.addr)
   glBindTexture(GL_TEXTURE_2D, id)
@@ -69,8 +73,9 @@ proc push_quad(dst, src: mu.Rect; color: mu.Color) =
     y = src.y.float/ATLAS_WIDTH.float
     w = src.w.float/ATLAS_WIDTH.float
     h = src.h.float/ATLAS_WIDTH.float
+  buf_idx.inc #buf_idx += 1
 
-  inc(buf_idx) #buf_idx += 1
+  # update texture buffer
   tex_buf[texvert_idx+0] = x
   tex_buf[texvert_idx+1] = y
   tex_buf[texvert_idx+2] = x+w
@@ -80,6 +85,7 @@ proc push_quad(dst, src: mu.Rect; color: mu.Color) =
   tex_buf[texvert_idx+6] = x+w
   tex_buf[texvert_idx+7] = y+h
 
+  # update vertex buffer
   vert_buf[texvert_idx+0] = dst.x.GLfloat
   vert_buf[texvert_idx+1] = dst.y.GLfloat
   vert_buf[texvert_idx+2] = (dst.x + dst.w).GLfloat
@@ -89,6 +95,7 @@ proc push_quad(dst, src: mu.Rect; color: mu.Color) =
   vert_buf[texvert_idx+6] = (dst.x + dst.w).GLfloat
   vert_buf[texvert_idx+7] = (dst.y + dst.h).GLfloat
 
+  # update color buffer
   template cbcpy(idx: int) =
     copyMem(color_buf[idx].addr, color.r.unsafeAddr, 4)
   cbcpy(color_idx)
@@ -96,6 +103,7 @@ proc push_quad(dst, src: mu.Rect; color: mu.Color) =
   cbcpy(color_idx+8)
   cbcpy(color_idx+12)
 
+  # update index buffer
   index_buf[index_idx+0] = (element_idx+0).GLuint
   index_buf[index_idx+1] = (element_idx+1).GLuint
   index_buf[index_idx+2] = (element_idx+2).GLuint

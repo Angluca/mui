@@ -3,17 +3,17 @@ include renderer
 var
   logbuf: string
   logbuf_updated = false
-  bg = [90.Real, 95, 100]
+  bg = [90f, 95, 100]
 
-#type PContext = ptr Context
 proc wlog(text: cstring) =
   if logbuf.len > 2048: logbuf = ""
-  if logbuf.len>0: logbuf.add '\n'
+  if logbuf.len > 0: logbuf.add '\n'
   logbuf.add text
   logbuf_updated = true
 
 
 proc test_window(ctx: PContext) =
+  # do window
   var
     win: ptr Container
     buf: string
@@ -22,6 +22,7 @@ proc test_window(ctx: PContext) =
     win.rect.w = mu.max(win.rect.w, 240)
     win.rect.h = mu.max(win.rect.h, 300)
 
+    # window info
     if ctx.header("win info")!=0:
       win = get_current_container(ctx)
       let v {.global.} = [54.cint, -1]
@@ -31,6 +32,7 @@ proc test_window(ctx: PContext) =
       ctx.label("size:")
       buf = $win.rect.w & "," & $win.rect.h; ctx.label(buf.cstring)
 
+    # lable + buttons
     if ctx.header_ex("test buttons", OPT_EXPANDED)!=0:
       let v {.global.} = [86.cint, -110, -1]
       ctx.layout_row(3, v[0].addr, 0)
@@ -45,6 +47,7 @@ proc test_window(ctx: PContext) =
         discard ctx.button("world")
         ctx.end_popup()
 
+    # tree
     if ctx.header_ex("tree and text", OPT_EXPANDED)!=0:
       let v {.global.} = [140.cint, -1]
       ctx.layout_row(2, v[0].addr, 0)
@@ -83,10 +86,11 @@ proc test_window(ctx: PContext) =
       ctx.text("Lorem ipsum dolor sit amet, consectetur adipiscing \nelit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus \nipsum, eu varius magna felis a nulla.")
       ctx.layout_end_column()
 
+    # backgroud color sliders
     if ctx.header_ex("bg color", OPT_EXPANDED)!=0:
       let v {.global.} = [-78.cint, -1]
       ctx.layout_row(2, v[0].addr, 74)
-
+      # sliders
       ctx.layout_begin_column()
       let v2 {.global.} = [46.cint, -1]
       ctx.layout_row(2, v2[0].addr, 0)
@@ -95,6 +99,7 @@ proc test_window(ctx: PContext) =
       ctx.label("blue:"); discard ctx.slider(bg[2].addr, 0.Real, 255.Real)
       ctx.layout_end_column()
 
+      # color preview
       var r = ctx.layout_next()
       ctx.draw_rect(r, mu.color(bg[0].cint, bg[1].cint, bg[2].cint, 255.cint))
       var buf = $bg[0].int & "," & $bg[1].int & "," & $bg[2].int
@@ -103,6 +108,7 @@ proc test_window(ctx: PContext) =
 
 proc log_window(ctx: PContext) =
   if ctx.begin_window("log win", mu.rect(350, 40, 300, 200))!=0:
+    # output text panel
     let v {.global.} = [-1.cint]
     ctx.layout_row(1, v[0].addr, -25)
     ctx.begin_panel("log output")
@@ -113,7 +119,7 @@ proc log_window(ctx: PContext) =
     if logbuf_updated:
       panel.scroll.y = panel.content_size.y
       logbuf_updated = false
-
+    # input textbox + submit button
     var
       buf0 {.global.}: array[128, char]
       buf: cstring = cast[cstring](buf0.addr)
@@ -130,7 +136,7 @@ proc log_window(ctx: PContext) =
 
     ctx.end_window()
 
-proc uint8_slider(ctx: PContext, val: ptr uint8, low:int, high:int): int  =
+proc uint8_slider(ctx: PContext, val: ptr uint8, low:int, high:int): int {.discardable.} =
   var tmp {.global.}: Real
   ctx.push_id(val.addr, sizeof(val).cint)
   tmp = val[].Real
@@ -147,10 +153,10 @@ proc style_window(ctx: PContext) =
     ctx.layout_row(6, v[0].addr, 0)
     for i, v in colors:
       ctx.label(v.cstring)
-      discard uint8_slider(ctx, ctx.style.colors[i].r.addr, 0, 255)
-      discard uint8_slider(ctx, ctx.style.colors[i].g.addr, 0, 255)
-      discard uint8_slider(ctx, ctx.style.colors[i].b.addr, 0, 255)
-      discard uint8_slider(ctx, ctx.style.colors[i].a.addr, 0, 255)
+      uint8_slider(ctx, ctx.style.colors[i].r.addr, 0, 255)
+      uint8_slider(ctx, ctx.style.colors[i].g.addr, 0, 255)
+      uint8_slider(ctx, ctx.style.colors[i].b.addr, 0, 255)
+      uint8_slider(ctx, ctx.style.colors[i].a.addr, 0, 255)
       ctx.draw_rect(ctx.layout_next(), ctx.style.colors[i])
     ctx.end_window()
 
@@ -188,9 +194,11 @@ proc text_height(font: Font): cint {.cdecl} =
 
 
 proc main =
+  # init sdl and renderer
   sdl.init(INIT_EVERYTHING)
   r_init()
 
+  # init microui
   var ctx: PContext = cast[PContext](alloc0(sizeof(mu.Context)))
   ctx.init()
   ctx.text_width = text_width
@@ -200,6 +208,7 @@ proc main =
     b = 0.cint
     bRun = true
   while bRun:
+    # handle SDL events
     var e: sdl.Event
     while sdl.pollEvent(e):
       b = 0
@@ -207,7 +216,7 @@ proc main =
       of QuitEvent: bRun = false; break
       of MOUSEMOTION: ctx.input_mousemove(e.motion.x, e.motion.y)
       of MOUSEWHEEL: ctx.input_scroll(0, e.wheel.y * -30)
-      #of TEXTINPUT: ctx.input_text(cast[cstring](e.text.text.addr)) #failed, fix it pls
+      #of TEXTINPUT: ctx.input_text(cast[cstring](e.text.text.addr)) #nim1.9.1devel bug
       of TEXTINPUT: input_text(ctx, cast[cstring](e.text.text.addr))
       of MOUSEBUTTONDOWN, MOUSEBUTTONUP:
         if button_map.hasKey(e.button.button and 0xff):
@@ -225,8 +234,10 @@ proc main =
           ctx.input_keyup(b)
       else: discard
 
+    # process frame
     process_frame(ctx)
 
+    # ender
     r_clear(mu.color(bg[0].cint, bg[1].cint, bg[2].cint, 255.cint))
     var cmd: ptr mu.Command = nil
     while ctx.next_command(cmd.addr) != 0:
