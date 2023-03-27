@@ -312,7 +312,7 @@ proc draw_text*(ctx: ptr Context; font: Font; str: cstring; len: cint; pos: Vec2
                color: Color) {.cdecl, importc: "mu_draw_text", mui.}
 proc draw_icon*(ctx: ptr Context; id: cint; rect: Rect; color: Color) {.cdecl,
     importc: "mu_draw_icon", mui.}
-proc layout_row*(ctx: ptr Context; items: cint; widths: ptr cint; height: cint) {.cdecl,
+proc layout_row*(ctx: ptr Context; items: cint; widths: pointer; height: cint) {.cdecl,
     importc: "mu_layout_row", mui.}
 proc layout_width*(ctx: ptr Context; width: cint) {.cdecl, importc: "mu_layout_width",
     mui.}
@@ -365,7 +365,7 @@ proc label*(ctx: ptr Context; text: cstring) {.cdecl, importc: "mu_label",
     mui.}
 proc button_ex*(ctx: ptr Context; label: cstring; icon: cint; opt: cint): cint {.cdecl,
     importc: "mu_button_ex", mui.}
-proc checkbox*(ctx: ptr Context; label: cstring; state: ptr cint): cint {.cdecl,
+proc checkbox*(ctx: ptr Context; label: cstring; state: pointer): cint {.cdecl,
     importc: "mu_checkbox", mui.}
 proc textbox_raw*(ctx: ptr Context; buf: cstring; bufsz: cint; id: Id; r: Rect; opt: cint): cint {.
     cdecl, importc: "mu_textbox_raw", mui.}
