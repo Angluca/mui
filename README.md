@@ -2,7 +2,7 @@
 A *tiny*, portable, immediate-mode UI library written in ANSI C
 
 Copy [**rxi/microui**](https://github.com/rxi/microui)  
-Use it with nim language.
+Use it with nim language :)
 ## Features
 * Tiny: around `1100 sloc` of ANSI C
 * Works within a fixed-sized memory region: no additional memory is allocated
@@ -14,7 +14,7 @@ Use it with nim language.
 
 ### Installation
 ```sh
-nimble install
+nimble install mui
 nimble test
 ```
 
