@@ -14,7 +14,7 @@ Use it with nim language :)
 
 ### Installation
 ```sh
-nimble install mui
+nimble install # or nimble install mui
 nimble test
 ```
 
