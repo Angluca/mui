@@ -21,14 +21,13 @@ nimble test
 ## Example
 ![example](https://user-images.githubusercontent.com/3920290/75187058-2b598800-5741-11ea-9358-38caf59f8791.png)
 ```nim
-import mui as mu
 #if ctx.begin_window("My Window", mu.Rect(x:10, y:10, w:140, h:86))!=0:
 if ctx.begin_window("My Window", mu.rect(10, 10, 140, 86))!=0:
   var v = [60.cint, -1]
   ctx.layout_row(2, v[0].addr, 0);
 
   ctx.label("First:");
-  if mu.button(ctx, "Button1")!=0: # c call func
+  if button(ctx, "Button1")!=0: # c call func
     echo "Button1 pressed"
 
   ctx.label("Second:");
