@@ -24,7 +24,6 @@ const
   TREENODEPOOL_SIZE* = 48
   MAX_WIDTHS* = 16
 
-# #define MU_REAL                 0.0f
 const
   REAL_FMT* = "%.3g"
   SLIDER_FMT* = "%.2f"
