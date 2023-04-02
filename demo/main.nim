@@ -25,17 +25,17 @@ proc test_window(ctx: PContext) =
     # window info
     if ctx.header("win info")!=0:
       win = get_current_container(ctx)
-      let v {.global.} = [54.cint, -1]
-      ctx.layout_row(2,v[0].addr, 0)
+      ctx.layout_row(2,[54, -1], 0)
       ctx.label("position:")
-      buf = $win.rect.x & "," & $win.rect.y; ctx.label(buf.cstring)
+      buf = $win.rect.x & "," & $win.rect.y
+      ctx.label(buf.cstring)
       ctx.label("size:")
-      buf = $win.rect.w & "," & $win.rect.h; ctx.label(buf.cstring)
+      buf = $win.rect.w & "," & $win.rect.h
+      ctx.label(buf.cstring)
 
     # lable + buttons
     if ctx.header_ex("test buttons", OPT_EXPANDED)!=0:
-      let v {.global.} = [86.cint, -110, -1]
-      ctx.layout_row(3, v[0].addr, 0)
+      ctx.layout_row(3, [86.cint, -110, -1], 0)
       ctx.label("test btn1:")
       if ctx.button("btn1:")!=0: wlog("pres btn1")
       if ctx.button("btn2:")!=0: wlog("pres btn2")
@@ -49,8 +49,7 @@ proc test_window(ctx: PContext) =
 
     # tree
     if ctx.header_ex("tree and text", OPT_EXPANDED)!=0:
-      let v {.global.} = [140.cint, -1]
-      ctx.layout_row(2, v[0].addr, 0)
+      ctx.layout_row(2, [140, -1], 0)
       ctx.layout_begin_column()
       if ctx.begin_treenode("test 1")!=0:
         if ctx.begin_treenode("test 1a")!=0:
@@ -64,8 +63,7 @@ proc test_window(ctx: PContext) =
         ctx.end_treenode()
 
       if ctx.begin_treenode("test 2")!=0:
-        let v {.global.} = [54.cint, 54]
-        ctx.layout_row(2, v[0].addr, 0)
+        ctx.layout_row(2, [54, 54], 0)
         if ctx.button("tbtn3:")!=0: wlog("pres tbtn3")
         if ctx.button("tbtn4:")!=0: wlog("pres tbtn4")
         if ctx.button("tbtn5:")!=0: wlog("pres tbtn5")
@@ -73,7 +71,7 @@ proc test_window(ctx: PContext) =
         ctx.end_treenode()
 
       if ctx.begin_treenode("test 3")!=0:
-        let chks {.global.} = [1.cint, 0, 1]
+        let chks = [1, 0, 1]
         discard ctx.checkbox("chkbox1", chks[0].addr)
         discard ctx.checkbox("chkbox1", chks[1].addr)
         discard ctx.checkbox("chkbox1", chks[2].addr)
@@ -81,39 +79,35 @@ proc test_window(ctx: PContext) =
       ctx.layout_end_column()
 
       ctx.layout_begin_column()
-      let v2 {.global.} = [-1.cint]
-      ctx.layout_row(1, v2[0].addr, 0)
+      ctx.layout_row(1, [-1], 0)
       ctx.text("Lorem ipsum dolor sit amet, consectetur adipiscing \nelit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus \nipsum, eu varius magna felis a nulla.")
       ctx.layout_end_column()
 
     # backgroud color sliders
     if ctx.header_ex("bg color", OPT_EXPANDED)!=0:
-      let v {.global.} = [-78.cint, -1]
-      ctx.layout_row(2, v[0].addr, 74)
+      ctx.layout_row(2, [-78, -1], 74)
       # sliders
       ctx.layout_begin_column()
-      let v2 {.global.} = [46.cint, -1]
-      ctx.layout_row(2, v2[0].addr, 0)
-      ctx.label("red:"); discard ctx.slider(bg[0].addr, 0.Real, 255.Real)
-      ctx.label("green:"); discard ctx.slider(bg[1].addr, 0.Real, 255.Real)
-      ctx.label("blue:"); discard ctx.slider(bg[2].addr, 0.Real, 255.Real)
+      ctx.layout_row(2, [46, -1], 0)
+      ctx.label("red:"); discard ctx.slider(bg[0].addr, 0, 255)
+      ctx.label("green:"); discard ctx.slider(bg[1].addr, 0, 255)
+      ctx.label("blue:"); discard ctx.slider(bg[2].addr, 0, 255)
       ctx.layout_end_column()
 
       # color preview
       var r = ctx.layout_next()
-      ctx.draw_rect(r, mu.color(bg[0].cint, bg[1].cint, bg[2].cint, 255.cint))
-      var buf = $bg[0].int & "," & $bg[1].int & "," & $bg[2].int
+      ctx.draw_rect(r, mu.color(bg[0], bg[1], bg[2], 255))
+      buf = $bg[0] & "," & $bg[1] & "," & $bg[2]
       ctx.draw_control_text(buf.cstring, r, COLOR_TEXT, OPT_ALIGNCENTER)
     ctx.end_window()
 
 proc log_window(ctx: PContext) =
   if ctx.begin_window("log win", mu.rect(350, 40, 300, 200))!=0:
     # output text panel
-    let v {.global.} = [-1.cint]
-    ctx.layout_row(1, v[0].addr, -25)
+    ctx.layout_row(1, [-1], -25)
     ctx.begin_panel("log output")
     var panel = ctx.get_current_container()
-    ctx.layout_row(1, v[0].addr, -1)
+    ctx.layout_row(1, [-1], -1)
     ctx.text(logbuf.cstring)
     ctx.end_panel()
     if logbuf_updated:
@@ -121,12 +115,10 @@ proc log_window(ctx: PContext) =
       logbuf_updated = false
     # input textbox + submit button
     var
-      buf0 {.global.}: array[128, char]
-      buf: cstring = cast[cstring](buf0.addr)
+      buf {.global.}: array[128, char]
       bsub = false
-      v2 {.global.} = [-70.cint, -1]
-    ctx.layout_row(2, v2[0].addr, 0)
-    if (ctx.textbox(buf, buf0.high) and RES_SUBMIT) != 0:
+    ctx.layout_row(2, [-70, -1], 0)
+    if (ctx.textbox(buf, buf.high) and RES_SUBMIT) != 0:
       ctx.set_focus(ctx.last_id)
       bsub = true
     if ctx.button("submit") != 0: bsub = true
@@ -138,19 +130,19 @@ proc log_window(ctx: PContext) =
 
 proc uint8_slider(ctx: PContext, val: ptr uint8, low:int, high:int): int {.discardable.} =
   var tmp {.global.}: Real
-  ctx.push_id(val.addr, sizeof(val).cint)
+  ctx.push_id(val.addr, sizeof(val))
   tmp = val[].Real
-  result = ctx.slider_ex(tmp.addr, low.Real, high.Real, 0.Real, "%.0f", OPT_ALIGNCENTER)
+  result = ctx.slider_ex(tmp.addr, low, high, 0, "%.0f", OPT_ALIGNCENTER)
   val[] = tmp.uint8
   ctx.pop_id()
 
 proc style_window(ctx: PContext) =
-  let colors {.global.} = [ "text:", "border:", "windowbg:", "titlebg:", "titletext:", "panelbg:", "button:", "buttonhover:", "buttonfocus:", "base:", "basehover:", "basefocus:", "scrollbase:", "scrollthumb:" ]
+  #let colors {.global.} = [ "text:", "border:", "windowbg:", "titlebg:", "titletext:", "panelbg:", "button:", "buttonhover:", "buttonfocus:", "base:", "basehover:", "basefocus:", "scrollbase:", "scrollthumb:" ]
+  const colors = [ "text:", "border:", "windowbg:", "titlebg:", "titletext:", "panelbg:", "button:", "buttonhover:", "buttonfocus:", "base:", "basehover:", "basefocus:", "scrollbase:", "scrollthumb:" ]
   if ctx.begin_window("style editor", mu.rect(350, 250, 300, 240))!=0:
     var
       sw = (ctx.get_current_container().body.w.float * 0.14).cint
-      v = [80.cint, sw, sw, sw, sw, -1]
-    ctx.layout_row(6, v[0].addr, 0)
+    ctx.layout_row(6, [80, sw, sw, sw, sw, -1], 0)
     for i, v in colors:
       ctx.label(v.cstring)
       uint8_slider(ctx, ctx.style.colors[i].r.addr, 0, 255)
@@ -216,18 +208,18 @@ proc main =
       of QuitEvent: bRun = false; break
       of MOUSEMOTION: ctx.input_mousemove(e.motion.x, e.motion.y)
       of MOUSEWHEEL: ctx.input_scroll(0, e.wheel.y * -30)
-      #of TEXTINPUT: ctx.input_text(cast[cstring](e.text.text.addr)) #nim1.9.1devel bug
-      of TEXTINPUT: input_text(ctx, cast[cstring](e.text.text.addr))
+      #of TEXTINPUT: ctx.input_text(e.text.text) #nim1.9.1devel bug
+      of TEXTINPUT: input_text(ctx, e.text.text)
       of MOUSEBUTTONDOWN, MOUSEBUTTONUP:
         if button_map.hasKey(e.button.button and 0xff):
-          b = button_map[e.button.button and 0xff].cint
+          b = button_map[e.button.button and 0xff]
         if (b!=0) and (e.kind == MOUSEBUTTONDOWN):
           ctx.input_mousedown(e.button.x, e.button.y, b)
         if (b!=0) and (e.kind == MOUSEBUTTONUP):
           ctx.input_mouseup(e.button.x, e.button.y, b)
       of KEYDOWN, KEYUP:
         if key_map.hasKey(e.key.keysym.sym and 0xff):
-          b = key_map[e.key.keysym.sym and 0xff].cint
+          b = key_map[e.key.keysym.sym and 0xff]
         if (b!=0) and (e.kind == KEYDOWN):
           ctx.input_keydown(b)
         if (b!=0) and (e.kind == KEYUP):
@@ -238,11 +230,11 @@ proc main =
     process_frame(ctx)
 
     # ender
-    r_clear(mu.color(bg[0].cint, bg[1].cint, bg[2].cint, 255.cint))
+    r_clear(mu.color(bg[0], bg[1], bg[2], 255))
     var cmd: ptr mu.Command = nil
     while ctx.next_command(cmd.addr) != 0:
       case cmd.typec:
-      of COMMAND_TEXT: r_draw_text(cast[cstring](cmd.text.str[0].addr), cmd.text.pos, cmd.text.color)
+      of COMMAND_TEXT: r_draw_text(cmd.text.str, cmd.text.pos, cmd.text.color)
       of COMMAND_RECT: r_draw_rect(cmd.rect.rect, cmd.rect.color)
       of COMMAND_ICON: r_draw_icon(cmd.icon.id, cmd.icon.rect, cmd.icon.color)
       of COMMAND_CLIP: r_set_clip_rect(cmd.clip.rect)

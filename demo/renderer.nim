@@ -133,11 +133,11 @@ proc r_draw_icon(id:int, rect:mu.Rect, color:mu.Color) =
   if atlas.hasKey(id):
     var
       src = atlas[id]
-      x = rect.x + ((rect.w-src.w)/2).cint
-      y = rect.y + ((rect.h-src.h)/2).cint
+      x = rect.x + ((rect.w-src.w)/2)
+      y = rect.y + ((rect.h-src.h)/2)
     push_quad(mu.rect(x,y,src.w,src.h), src, color)
 
-proc r_get_text_width(p: cstring, len:int): cint =
+proc r_get_text_width(p: cstring, len:int): int =
   var
     chr: int
   for i in 0..<len:
@@ -146,7 +146,7 @@ proc r_get_text_width(p: cstring, len:int): cint =
     if atlas.hasKey(chr):
       result += atlas[chr].w
 
-proc r_get_text_height:cint = 18
+proc r_get_text_height:int = 18
 
 proc r_set_clip_rect(rect:mu.Rect) =
   flush()

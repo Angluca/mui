@@ -394,6 +394,16 @@ proc begin_panel_ex*(ctx: ptr Context; name: cstring; opt: cint) {.cdecl,
     importc: "mu_begin_panel_ex", mui.}
 proc end_panel*(ctx: ptr Context) {.cdecl, importc: "mu_end_panel", mui.}
 
+#converts
+converter n2cu*(n: SomeInteger): cuint = n.cuint
+converter n2ci*(n: SomeNumber|char|enum): cint = n.cint
+converter n2cf*(n: int): cfloat = n.cfloat
+converter n2str*(n: SomeNumber): string = $n
+#converter s2cstr*(n: string): cstring = n.cstring
+converter p2cstr*(p: pointer|ptr): cstring = cast[cstring](p)
+converter sz2cstr*(sz: array|UncheckedArray): cstring = cast[cstring](sz[0].addr)
+converter sz2pt*(sz: array|UncheckedArray): pointer = sz[0].addr
+
 type
   PVec2* = ptr Vec2
   PRect* = ptr Rect
