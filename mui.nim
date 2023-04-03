@@ -395,7 +395,6 @@ proc begin_panel_ex*(ctx: ptr Context; name: cstring; opt: cint) {.cdecl,
 proc end_panel*(ctx: ptr Context) {.cdecl, importc: "mu_end_panel", mui.}
 
 #converts
-converter isTrue*(n: SomeInteger): bool = (n>0)
 converter n2cu*(n: SomeInteger): cuint = n.cuint
 converter n2ci*(n: SomeNumber|char|enum): cint = n.cint
 converter n2cf*(n: int): cfloat = n.cfloat
