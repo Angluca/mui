@@ -11,7 +11,6 @@ proc wlog(text: cstring) =
   logbuf.add text
   logbuf_updated = true
 
-
 proc test_window(ctx: PContext) =
   # do window
   var
@@ -35,7 +34,7 @@ proc test_window(ctx: PContext) =
 
     # lable + buttons
     if ctx.header_ex("test buttons", OPT_EXPANDED)!=0:
-      ctx.layout_row(3, [86.cint, -110, -1], 0)
+      ctx.layout_row(3, [86, -110, -1], 0)
       ctx.label("test btn1:")
       if ctx.button("btn1:")!=0: wlog("pres btn1")
       if ctx.button("btn2:")!=0: wlog("pres btn2")
@@ -118,13 +117,13 @@ proc log_window(ctx: PContext) =
       buf {.global.}: array[128, char]
       bsub = false
     ctx.layout_row(2, [-70, -1], 0)
-    if (ctx.textbox(buf, buf.high) and RES_SUBMIT)!=0:
+    if (ctx.textbox(buf[0].addr, buf.high) and RES_SUBMIT)!=0:
       ctx.set_focus(ctx.last_id)
       bsub = true
     if ctx.button("submit")!=0: bsub = true
     if bsub:
-      wlog(buf)
-      zeroMem(buf, buf.len)
+      wlog(buf[0].addr)
+      zeroMem(buf[0].addr, buf.len)
 
     ctx.end_window()
 
@@ -234,7 +233,7 @@ proc main =
     var cmd: ptr mu.Command = nil
     while ctx.next_command(cmd.addr)!=0:
       case cmd.typec:
-      of COMMAND_TEXT: r_draw_text(cmd.text.str, cmd.text.pos, cmd.text.color)
+      of COMMAND_TEXT: r_draw_text(cmd.text.str[0].addr, cmd.text.pos, cmd.text.color)
       of COMMAND_RECT: r_draw_rect(cmd.rect.rect, cmd.rect.color)
       of COMMAND_ICON: r_draw_icon(cmd.icon.id, cmd.icon.rect, cmd.icon.color)
       of COMMAND_CLIP: r_set_clip_rect(cmd.clip.rect)

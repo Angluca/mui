@@ -295,7 +295,7 @@ proc input_keydown*(ctx: ptr Context; key: cint) {.cdecl, importc: "mu_input_key
     mui.}
 proc input_keyup*(ctx: ptr Context; key: cint) {.cdecl, importc: "mu_input_keyup",
     mui.}
-proc input_text*(ctx: ptr Context; text: cstring) {.cdecl, importc: "mu_input_text",
+proc input_text*(ctx: ptr Context; text: cstring|array) {.cdecl, importc: "mu_input_text",
     mui.}
 proc push_command*(ctx: ptr Context; typec: cint; size: cint): ptr Command {.cdecl,
     importc: "mu_push_command", mui.}
@@ -311,7 +311,7 @@ proc draw_text*(ctx: ptr Context; font: Font; str: cstring; len: cint; pos: Vec2
                color: Color) {.cdecl, importc: "mu_draw_text", mui.}
 proc draw_icon*(ctx: ptr Context; id: cint; rect: Rect; color: Color) {.cdecl,
     importc: "mu_draw_icon", mui.}
-proc layout_row*(ctx: ptr Context; items: cint; widths: pointer; height: cint) {.cdecl,
+proc layout_row*(ctx: ptr Context; items: cint; widths: cstring|array; height: cint) {.cdecl,
     importc: "mu_layout_row", mui.}
 proc layout_width*(ctx: ptr Context; width: cint) {.cdecl, importc: "mu_layout_width",
     mui.}
@@ -398,10 +398,6 @@ proc end_panel*(ctx: ptr Context) {.cdecl, importc: "mu_end_panel", mui.}
 converter n2cu*(n: SomeInteger): cuint = n.cuint
 converter n2ci*(n: SomeNumber|char|enum): cint = n.cint
 converter n2cf*(n: int): cfloat = n.cfloat
-converter n2str*(n: SomeNumber): string = $n
-converter p2cstr*(p: pointer|ptr): cstring = cast[cstring](p)
-converter sz2pt*(sz: array|UncheckedArray): pointer = sz[0].addr
-converter sz2cstr*(sz: array|UncheckedArray): cstring = cast[cstring](sz[0].addr)
 
 type
   PVec2* = ptr Vec2
