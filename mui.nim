@@ -364,7 +364,7 @@ proc label*(ctx: ptr Context; text: cstring) {.cdecl, importc: "mu_label",
     mui.}
 proc button_ex*(ctx: ptr Context; label: cstring; icon: cint; opt: cint): cint {.cdecl,
     importc: "mu_button_ex", mui.}
-proc checkbox*(ctx: ptr Context; label: cstring; state: pointer): cint {.cdecl,
+proc checkbox*(ctx: ptr Context; label: cstring; state: ptr int): cint {.cdecl,
     importc: "mu_checkbox", mui.}
 proc textbox_raw*(ctx: ptr Context; buf: cstring; bufsz: cint; id: Id; r: Rect; opt: cint): cint {.
     cdecl, importc: "mu_textbox_raw", mui.}
