@@ -20,14 +20,14 @@ main loop:
 
 ## Getting Started
 Before use a `mu_Context` should be initialised:
-```c
+```nim
 var ctx: PContext = cast[PContext](alloc0(sizeof(mu.Context)))
 mu.init(ctx)
 ```
 
 Following which the context's `text_width` and `text_height` callback functions
 should be set:
-```c
+```nim
 ctx.text_width = text_width
 ctx.text_height = text_height
 ```
@@ -38,7 +38,7 @@ if the same input event occurs in a single frame.
 
 After handling the input the `mu_begin()` function must be called before
 processing your UI:
-```c
+```nim
 mu.begin(ctx)
 ```
 
@@ -48,9 +48,9 @@ functions return a truthy value if the window is open, if this is not the case
 we should not process the window any further. When we are finished processing
 the window's ui the `mu_end_...` window function should be called.
 
-```c
+```nim
 if mu.begin_window(ctx, "demo win", mu.rect(40,40,300,450))!=0:
-  /* process ui here... */
+  # process ui here... 
   mu.end_window(ctx)
 ```
 
@@ -62,7 +62,7 @@ While inside a window block we can safely process controls. Controls that allow
 user interaction return a bitset of `MU_RES_...` values. Some controls — such
 as buttons — can only potentially return a single `MU_RES_...`, thus their
 return value can be treated as a boolean:
-```c
+```nim
 if mu.button(ctx, "My Button") != 0:
   echo "'My Button' was pressed\n"
 ```
@@ -74,7 +74,7 @@ pointer. An issue arises then if you have several buttons in a window or panel
 that use the same label. The `mu_push_id()` and `mu_pop_id()` functions are
 provided for such situations, allowing you to push additional data that will be
 mixed into the unique ID:
-```c
+```nim
 for i in 0..<10:
   mu.push_id(ctx, i.addr, sizeof(i).cint)
   if mu.button(ctx, "x") != 0:
@@ -84,14 +84,14 @@ for i in 0..<10:
 
 When we're finished processing the UI for this frame the `mu_end()` function
 should be called:
-```c
+```nim
 mu.end(ctx);
 ```
 
 When we're ready to draw the UI the `mu_next_command()` can be used to iterate
 the resultant commands. The function expects a `mu_Command` pointer initialised
 to `NULL` (nil). It is safe to iterate through the commands list any number of times:
-```c
+```nim
 var cmd: ptr mu.Command = nil
 while mu.next_command(ctx, cmd.addr) != 0:
   case cmd.typec:
@@ -112,7 +112,7 @@ contain a number of rows and so forth. A row is initialised using the
 `mu_layout_row()` function, the user should specify the number of items
 on the row, an array containing the width of each item, and the height
 of the row:
-```c
+```nim
 #[ initialise a row of 3 items: the first item with a width
 ** of 90 and the remaining two with the width of 100 ]#
 var v = [90.cint, 100, 100]
@@ -128,7 +128,7 @@ which will result in the Context's `style.size` value being used, or a
 negative value which will size the item relative to the right/bottom edge,
 thus if we wanted a row with a small button at the left, a textbox filling
 most the row and a larger button at the right, we could do the following:
-```c
+```nim
 var v = [30.cint, -90, -1]
 mu.layout_row(ctx, 3, v[0].addr, 0)
 mu.button(ctx, "X")
@@ -140,7 +140,7 @@ If the `items` parameter is `0`, the `widths` parameter is ignored
 and controls will continue to be added to the row at the width last
 specified by `mu_layout_width()` or `style.size.x` if this function has
 not been called:
-```c
+```nim
 mu.layout_row(ctx, 0, nil, 0)
 mu.layout_width(ctx, -90.cint)
 mu.textbox(ctx, buf, sizeof(buf));
@@ -167,14 +167,14 @@ a screen-space Rect or a Rect which will have the container's position
 and scroll offset applied to it. You can peek the next Rect from the
 layout system by using the `mu_layout_next()` function to retrieve it,
 followed by `mu_layout_set_next()` to return it:
-```c
+```nim
 var rect = mu.layout_next(ctx)
 mu.layout_set_next(ctx, rect, 0)
 ```
 
 If you want to position controls arbitrarily inside a container the
 `relative` argument of `mu_layout_set_next()` should be true:
-```c
+```nim
 # place a (40, 40) sized button at (300, 300) inside the container:
 mu.layout_set_next(ctx, mu.rect(300, 300, 40, 40), 1)
 mu.button(ctx, "X")
@@ -219,7 +219,7 @@ to allow for text input.
 
 A control that acts as a button which displays an integer and, when
 clicked increments that integer, could be implemented as such:
-```c
+```nim
 proc incrementer(ctx: PContext, var val: int): int =
   var
     id = mu.get_id(ctx, val.addr, val.sizeof)
