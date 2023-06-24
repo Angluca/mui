@@ -232,7 +232,7 @@ proc main =
     r_clear(mu.color(bg[0], bg[1], bg[2], 255))
     var cmd: ptr mu.Command = nil
     while ctx.next_command(cmd.addr)!=0:
-      case cmd.typec:
+      case cmd.type:
       of COMMAND_TEXT: r_draw_text(cmd.text.str[0].addr, cmd.text.pos, cmd.text.color)
       of COMMAND_RECT: r_draw_rect(cmd.rect.rect, cmd.rect.color)
       of COMMAND_ICON: r_draw_icon(cmd.icon.id, cmd.icon.rect, cmd.icon.color)

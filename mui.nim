@@ -137,7 +137,7 @@ type
     last_update* {.importc: "last_update".}: mcint
 
   BaseCommand* {.importc: "mu_BaseCommand", mui, bycopy.} = object
-    typec* {.importc: "type".}: mcint
+    `type`* {.importc: "type".}: mcint
     size* {.importc: "size".}: mcint
 
   JumpCommand* {.importc: "mu_JumpCommand", mui, bycopy.} = object
@@ -167,7 +167,7 @@ type
     color* {.importc: "color".}: Color
 
   Command* {.importc: "mu_Command", mui, bycopy, union.} = object
-    typec* {.importc: "type".}: mcint
+    `type`* {.importc: "type".}: mcint
     base* {.importc: "base".}: BaseCommand
     jump* {.importc: "jump".}: JumpCommand
     clip* {.importc: "clip".}: ClipCommand
