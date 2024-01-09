@@ -28,6 +28,7 @@ type
   mcint = cint
   mcuint = cuint
   mcfloat = cfloat
+  mcstring = cstring
 const
   REAL_FMT* = "%.3g"
   SLIDER_FMT* = "%.2f"
@@ -210,7 +211,7 @@ type
     colors* {.importc: "colors".}: array[COLOR_MAX, Color]
 
   Context* {.importc: "mu_Context", mui, bycopy.} = object
-    text_width* {.importc: "text_width".}: proc (font: Font; str: cstring; len: mcint): mcint {.
+    text_width* {.importc: "text_width".}: proc (font: Font; str: mcstring; len: mcint): mcint {.
         cdecl.}               ##  callbacks
     text_height* {.importc: "text_height".}: proc (font: Font): mcint {.cdecl.}
     draw_frame* {.importc: "draw_frame".}: proc (ctx: ptr Context; rect: Rect;
@@ -277,7 +278,7 @@ proc check_clip*(ctx: ptr Context; r: Rect): mcint {.cdecl, importc: "mu_check_c
     mui.}
 proc get_current_container*(ctx: ptr Context): ptr Container {.cdecl,
     importc: "mu_get_current_container", mui.}
-proc get_container*(ctx: ptr Context; name: cstring): ptr Container {.cdecl,
+proc get_container*(ctx: ptr Context; name: mcstring): ptr Container {.cdecl,
     importc: "mu_get_container", mui.}
 proc bring_to_front*(ctx: ptr Context; cnt: ptr Container) {.cdecl,
     importc: "mu_bring_to_front", mui.}
@@ -299,7 +300,7 @@ proc input_keydown*(ctx: ptr Context; key: mcint) {.cdecl, importc: "mu_input_ke
     mui.}
 proc input_keyup*(ctx: ptr Context; key: mcint) {.cdecl, importc: "mu_input_keyup",
     mui.}
-proc input_text*(ctx: ptr Context; text: cstring|array) {.cdecl, importc: "mu_input_text",
+proc input_text*(ctx: ptr Context; text: mcstring) {.cdecl, importc: "mu_input_text",
     mui.}
 proc push_command*(ctx: ptr Context; typec: mcint; size: mcint): ptr Command {.cdecl,
     importc: "mu_push_command", mui.}
@@ -311,11 +312,11 @@ proc draw_rect*(ctx: ptr Context; rect: Rect; color: Color) {.cdecl,
     importc: "mu_draw_rect", mui.}
 proc draw_box*(ctx: ptr Context; rect: Rect; color: Color) {.cdecl,
     importc: "mu_draw_box", mui.}
-proc draw_text*(ctx: ptr Context; font: Font; str: cstring; len: mcint; pos: Vec2;
+proc draw_text*(ctx: ptr Context; font: Font; str: mcstring; len: mcint; pos: Vec2;
                color: Color) {.cdecl, importc: "mu_draw_text", mui.}
 proc draw_icon*(ctx: ptr Context; id: mcint; rect: Rect; color: Color) {.cdecl,
     importc: "mu_draw_icon", mui.}
-proc layout_row*(ctx: ptr Context; items: mcint; widths: cstring|array; height: mcint) {.cdecl,
+proc layout_row*(ctx: ptr Context; items: mcint; widths: array|seq; height: mcint) {.cdecl,
     importc: "mu_layout_row", mui.}
 proc layout_width*(ctx: ptr Context; width: mcint) {.cdecl, importc: "mu_layout_width",
     mui.}
@@ -331,7 +332,7 @@ proc layout_next*(ctx: ptr Context): Rect {.cdecl, importc: "mu_layout_next",
                                        mui.}
 proc draw_control_frame*(ctx: ptr Context; id: Id; rect: Rect; colorid: mcint; opt: mcint) {.
     cdecl, importc: "mu_draw_control_frame", mui.}
-proc draw_control_text*(ctx: ptr Context; str: cstring; rect: Rect; colorid: mcint;
+proc draw_control_text*(ctx: ptr Context; str: mcstring; rect: Rect; colorid: mcint;
                        opt: mcint) {.cdecl, importc: "mu_draw_control_text",
                                   mui.}
 proc mouse_over*(ctx: ptr Context; rect: Rect): mcint {.cdecl, importc: "mu_mouse_over",
@@ -362,39 +363,39 @@ template begin_window*(ctx, title, rect: untyped): untyped =
 template begin_panel*(ctx, name: untyped): untyped =
   begin_panel_ex(ctx, name, 0)
 
-proc text*(ctx: ptr Context; text: cstring) {.cdecl, importc: "mu_text",
+proc text*(ctx: ptr Context; text: mcstring) {.cdecl, importc: "mu_text",
                                         mui.}
-proc label*(ctx: ptr Context; text: cstring) {.cdecl, importc: "mu_label",
+proc label*(ctx: ptr Context; text: mcstring) {.cdecl, importc: "mu_label",
     mui.}
-proc button_ex*(ctx: ptr Context; label: cstring; icon: mcint; opt: mcint): mcint {.cdecl,
+proc button_ex*(ctx: ptr Context; label: mcstring; icon: mcint; opt: mcint): mcint {.cdecl,
     importc: "mu_button_ex", mui.}
-proc checkbox*(ctx: ptr Context; label: cstring; state: ptr int): mcint {.cdecl,
+proc checkbox*(ctx: ptr Context; label: mcstring; state: ptr int): mcint {.cdecl,
     importc: "mu_checkbox", mui.}
-proc textbox_raw*(ctx: ptr Context; buf: cstring; bufsz: mcint; id: Id; r: Rect; opt: mcint): mcint {.
+proc textbox_raw*(ctx: ptr Context; buf: mcstring; bufsz: mcint; id: Id; r: Rect; opt: mcint): mcint {.
     cdecl, importc: "mu_textbox_raw", mui.}
-proc textbox_ex*(ctx: ptr Context; buf: cstring; bufsz: mcint; opt: mcint): mcint {.cdecl,
+proc textbox_ex*(ctx: ptr Context; buf: mcstring; bufsz: mcint; opt: mcint): mcint {.cdecl,
     importc: "mu_textbox_ex", mui.}
 proc slider_ex*(ctx: ptr Context; value: ptr Real; low: Real; high: Real; step: Real;
-               fmt: cstring; opt: mcint): mcint {.cdecl, importc: "mu_slider_ex",
+               fmt: mcstring; opt: mcint): mcint {.cdecl, importc: "mu_slider_ex",
     mui.}
-proc number_ex*(ctx: ptr Context; value: ptr Real; step: Real; fmt: cstring; opt: mcint): mcint {.
+proc number_ex*(ctx: ptr Context; value: ptr Real; step: Real; fmt: mcstring; opt: mcint): mcint {.
     cdecl, importc: "mu_number_ex", mui.}
-proc header_ex*(ctx: ptr Context; label: cstring; opt: mcint): mcint {.cdecl,
+proc header_ex*(ctx: ptr Context; label: mcstring; opt: mcint): mcint {.cdecl,
     importc: "mu_header_ex", mui.}
-proc begin_treenode_ex*(ctx: ptr Context; label: cstring; opt: mcint): mcint {.cdecl,
+proc begin_treenode_ex*(ctx: ptr Context; label: mcstring; opt: mcint): mcint {.cdecl,
     importc: "mu_begin_treenode_ex", mui.}
 proc end_treenode*(ctx: ptr Context) {.cdecl, importc: "mu_end_treenode",
                                    mui.}
-proc begin_window_ex*(ctx: ptr Context; title: cstring; rect: Rect; opt: mcint): mcint {.
+proc begin_window_ex*(ctx: ptr Context; title: mcstring; rect: Rect; opt: mcint): mcint {.
     cdecl, importc: "mu_begin_window_ex", mui.}
 proc end_window*(ctx: ptr Context) {.cdecl, importc: "mu_end_window",
                                  mui.}
-proc open_popup*(ctx: ptr Context; name: cstring) {.cdecl, importc: "mu_open_popup",
+proc open_popup*(ctx: ptr Context; name: mcstring) {.cdecl, importc: "mu_open_popup",
     mui.}
-proc begin_popup*(ctx: ptr Context; name: cstring): mcint {.cdecl,
+proc begin_popup*(ctx: ptr Context; name: mcstring): mcint {.cdecl,
     importc: "mu_begin_popup", mui.}
 proc end_popup*(ctx: ptr Context) {.cdecl, importc: "mu_end_popup", mui.}
-proc begin_panel_ex*(ctx: ptr Context; name: cstring; opt: mcint) {.cdecl,
+proc begin_panel_ex*(ctx: ptr Context; name: mcstring; opt: mcint) {.cdecl,
     importc: "mu_begin_panel_ex", mui.}
 proc end_panel*(ctx: ptr Context) {.cdecl, importc: "mu_end_panel", mui.}
 
@@ -402,6 +403,7 @@ proc end_panel*(ctx: ptr Context) {.cdecl, importc: "mu_end_panel", mui.}
 converter n2mci*(n: SomeNumber|char|enum): mcint = n.cint
 converter n2mcu*(n: SomeInteger): mcuint = n.cuint
 converter n2mcf*(n: int): mcfloat = n.cfloat
+converter s2mcstr*(s: string|array|seq): mcstring = cast[mcstring](s[0].addr)
 
 type
   PVec2* = ptr Vec2

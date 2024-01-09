@@ -70,7 +70,7 @@ proc test_window(ctx: PContext) =
         ctx.end_treenode()
 
       if ctx.begin_treenode("test 3")!=0:
-        let chks = [1, 0, 1]
+        var chks{.global.} = [1, 0, 1]
         discard ctx.checkbox("chkbox1", chks[0].addr)
         discard ctx.checkbox("chkbox1", chks[1].addr)
         discard ctx.checkbox("chkbox1", chks[2].addr)
@@ -117,12 +117,12 @@ proc log_window(ctx: PContext) =
       buf {.global.}: array[128, char]
       bsub = false
     ctx.layout_row(2, [-70, -1], 0)
-    if (ctx.textbox(buf[0].addr, buf.high) and RES_SUBMIT)!=0:
+    if (ctx.textbox(buf, buf.high) and RES_SUBMIT)!=0:
       ctx.set_focus(ctx.last_id)
       bsub = true
     if ctx.button("submit")!=0: bsub = true
     if bsub:
-      wlog(buf[0].addr)
+      wlog(buf)
       zeroMem(buf[0].addr, buf.len)
 
     ctx.end_window()
@@ -143,7 +143,7 @@ proc style_window(ctx: PContext) =
       sw = (ctx.get_current_container().body.w.float * 0.14).cint
     ctx.layout_row(6, [80, sw, sw, sw, sw, -1], 0)
     for i, v in colors:
-      ctx.label(v.cstring)
+      ctx.label(v)
       uint8_slider(ctx, ctx.style.colors[i].r.addr, 0, 255)
       uint8_slider(ctx, ctx.style.colors[i].g.addr, 0, 255)
       uint8_slider(ctx, ctx.style.colors[i].b.addr, 0, 255)
