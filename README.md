@@ -46,7 +46,7 @@ if ctx.begin_window("My Window", mu.rect(10, 10, 140, 86))!=0:
 [**Browser Demo**](https://floooh.github.io/sokol-html5/sgl-microui-sapp.html)
 
 ## Usage
-* See the [`demo`](demo) directory for a usage example
+* See the [`demo`](demo/mui-sokol) directory for a usage example
 
 ## Notes
 The library expects the user to provide input and handle the resultant drawing
