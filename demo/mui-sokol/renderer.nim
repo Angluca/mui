@@ -72,8 +72,10 @@ proc r_draw_rect(rect: mu.Rect, color: mu.Color) =
 
 proc r_draw_text(text: cstring, pos: mu.Vec2, color: mu.Color) =
   var dst = mu.rect(pos.x, pos.y, 0, 0)
-  for i in 0..<text.len:
-    var src = atlas[ATLAS_FONT + text[i]]
+  for i, d in text:
+    if (d and 0xc0) == 0x80: continue
+    let chr = min(d, 127.char)
+    var src = atlas[ATLAS_FONT + chr]
     dst.w = src.w
     dst.h = src.h
     r_push_quad(dst, src, color)
@@ -82,13 +84,15 @@ proc r_draw_text(text: cstring, pos: mu.Vec2, color: mu.Color) =
 proc r_draw_icon(id: int, rect: mu.Rect, color: mu.Color) =
   var
     src = atlas[id]
-    x = rect.x + (rect.w - src.w) div 2
-    y = rect.y + (rect.h - src.h) div 2
+    x = rect.x + ((rect.w - src.w) div 2)
+    y = rect.y + ((rect.h - src.h) div 2)
   r_push_quad(mu.rect(x, y, src.w, src.h), src, color)
 
 proc r_get_text_width(text: cstring, len: cint): cint =
   for i in 0..<len:
-    result += atlas[ATLAS_FONT + text[i]].w
+    if (text[i] and 0xc0) == 0x80: continue
+    var chr = min(text[i], 127.char)
+    result += atlas[ATLAS_FONT + chr].w
 
 proc r_get_text_height: cint = 18
 

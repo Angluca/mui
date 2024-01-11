@@ -69,7 +69,8 @@ proc event(ev: ptr Event) {.cdecl.} =
   of eventtypeKeyup:
     input_keyup(state.ctx, key_map[ev.keyCode.int and 511])
   of eventtypeChar:
-    input_text(state.ctx, [ev.charCode and 0xff, 0])
+    if ev.charCode != 127:
+      input_text(state.ctx, [ev.charCode.byte and 255, 0])
   else: discard
 
 proc frame {.cdecl.} =
@@ -115,11 +116,9 @@ proc test_window(ctx: PContext) =
       win = get_current_container(ctx)
       ctx.layout_row(2,[54, -1], 0)
       ctx.label("Position:")
-      var buf = "$#, $#" % [$win.rect.x, $win.rect.y]
-      ctx.label(buf.cstring)
+      var buf = "$#, $#" % [$win.rect.x, $win.rect.y]; ctx.label(buf.cstring)
       ctx.label("Size:")
-      buf = "$#, $#" % [$win.rect.w, $win.rect.h]
-      ctx.label(buf.cstring)
+      buf = "$#, $#" % [$win.rect.w, $win.rect.h]; ctx.label(buf.cstring)
 
     # lable + buttons
     if ctx.header_ex("Test buttons", OPT_EXPANDED)!=0:
@@ -194,7 +193,7 @@ proc test_window(ctx: PContext) =
 proc log_window(ctx: PContext) =
   if ctx.begin_window("Log window", mu.rect(350, 0, 300, 200))!=0:
     # output text panel
-    ctx.layout_row(1, [-1], -28)
+    ctx.layout_row(1, [-1], -25)
     ctx.begin_panel("Log output")
     var panel = ctx.get_current_container()
     ctx.layout_row(1, [-1], -1)
@@ -208,7 +207,7 @@ proc log_window(ctx: PContext) =
       buf {.global.}: array[128, char]
       isSubmitted = false
     ctx.layout_row(2, [-70, -1], 0)
-    if (ctx.textbox(buf, buf.high) and RES_SUBMIT)!=0:
+    if (ctx.textbox(buf, buf.len) and RES_SUBMIT)!=0:
       ctx.set_focus(ctx.last_id)
       isSubmitted = true
     if ctx.button("submit")!=0: isSubmitted = true
@@ -245,8 +244,7 @@ proc style_window(ctx: PContext) =
   ("scrollthumb:",  COLOR_SCROLLTHUMB)]
 
   if ctx.begin_window("Style editor", mu.rect(350, 200, 300, 240))!=0:
-    var
-      sw = (ctx.get_current_container().body.w.float * 0.14).cint
+    var sw = (ctx.get_current_container().body.w.float * 0.14).cint
     ctx.layout_row(6, [80, sw, sw, sw, sw, -1], 0)
     for i, val in colors:
       ctx.label(val.label.cstring)
