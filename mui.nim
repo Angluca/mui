@@ -249,9 +249,13 @@ type
 
 {.pop.}
 
-proc vec2*(x: mcint; y: mcint): Vec2 {.cdecl, importc: "mu_vec2", mui.}
-proc rect*(x: mcint; y: mcint; w: mcint; h: mcint): Rect {.cdecl, importc: "mu_rect", mui.}
-proc color*(r: mcint; g: mcint; b: mcint; a: mcint): Color {.cdecl, importc: "mu_color", mui.}
+#proc vec2*(x: mcint; y: mcint): Vec2 {.cdecl, importc: "mu_vec2", mui.}
+#proc rect*(x: mcint; y: mcint; w: mcint; h: mcint): Rect {.cdecl, importc: "mu_rect", mui.}
+#proc color*(r: mcint; g: mcint; b: mcint; a: mcint): Color {.cdecl, importc: "mu_color", mui.}
+func vec2*(x: mcint; y: mcint): Vec2 = Vec2(x:x, y:y)
+func rect*(x: mcint; y: mcint; w: mcint; h: mcint): Rect = Rect(x:x,y:y,w:w,h:h)
+func color*(r: mcint; g: mcint; b: mcint; a: mcint): Color = Color(r:r.uint8,g:g.uint8,b:b.uint8,a:a.uint8)
+
 proc init*(ctx: ptr Context) {.cdecl, importc: "mu_init", mui.}
 proc begin*(ctx: ptr Context) {.cdecl, importc: "mu_begin", mui.}
 proc `end`*(ctx: ptr Context) {.cdecl, importc: "mu_end", mui.}

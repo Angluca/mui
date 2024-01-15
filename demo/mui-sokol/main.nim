@@ -164,9 +164,9 @@ proc test_window(ctx: PContext) =
 
       ctx.layout_begin_column()
       ctx.layout_row(1, [-1.cint], 0)
-      ctx.text("""Lorem ipsum dolor sit amet, consectetur adipiscing
-      elit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus
-      ipsum, eu varius magna felis a nulla.""")
+      ctx.text("Lorem ipsum dolor sit amet, consectetur adipiscing "&
+      "elit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus "&
+      "ipsum, eu varius magna felis a nulla.")
       ctx.layout_end_column()
 
     # backgroud color sliders
