@@ -284,10 +284,7 @@ proc draw_box*(ctx: ptr Context; rect: Rect; color: Color) {.cdecl, importc: "mu
 proc draw_text*(ctx: ptr Context; font: Font; str: mcstring; len: mcint; pos: Vec2; color: Color) {.cdecl, importc: "mu_draw_text", mui.}
 proc draw_icon*(ctx: ptr Context; id: mcint; rect: Rect; color: Color) {.cdecl, importc: "mu_draw_icon", mui.}
 
-template layout_row*(ctx, items, widths, height: untyped) =
-  let ws = widths
-  layout_row(ctx, items, cast[ptr int](ws[0].addr), height)
-proc layout_row*(ctx: ptr Context; items: mcint; widths: ptr int; height: mcint) {.cdecl, importc: "mu_layout_row", mui.}
+proc layout_row*(ctx: ptr Context; items: mcint; widths: ptr cint; height: mcint) {.cdecl, importc: "mu_layout_row", mui.}
 
 proc layout_width*(ctx: ptr Context; width: mcint) {.cdecl, importc: "mu_layout_width", mui.}
 proc layout_height*(ctx: ptr Context; height: mcint) {.cdecl, importc: "mu_layout_height", mui.}
@@ -327,7 +324,7 @@ template begin_panel*(ctx, name: untyped): untyped =
 proc text*(ctx: ptr Context; text: mcstring) {.cdecl, importc: "mu_text", mui.}
 proc label*(ctx: ptr Context; text: mcstring) {.cdecl, importc: "mu_label", mui.}
 proc button_ex*(ctx: ptr Context; label: mcstring; icon: mcint; opt: mcint): mcint {.cdecl, importc: "mu_button_ex", mui.}
-proc checkbox*(ctx: ptr Context; label: mcstring; state: ptr int): mcint {.cdecl, importc: "mu_checkbox", mui.}
+proc checkbox*(ctx: ptr Context; label: mcstring; state: ptr cint): mcint {.cdecl, importc: "mu_checkbox", mui.}
 proc textbox_raw*(ctx: ptr Context; buf: mcstring; bufsz: mcint; id: Id; r: Rect; opt: mcint): mcint {.cdecl, importc: "mu_textbox_raw", mui.}
 proc textbox_ex*(ctx: ptr Context; buf: mcstring; bufsz: mcint; opt: mcint): mcint {.cdecl, importc: "mu_textbox_ex", mui.}
 proc slider_ex*(ctx: ptr Context; value: ptr Real; low: Real; high: Real; step: Real; fmt: mcstring; opt: mcint): mcint {.cdecl, importc: "mu_slider_ex", mui.}
@@ -347,7 +344,9 @@ proc end_panel*(ctx: ptr Context) {.cdecl, importc: "mu_end_panel", mui.}
 converter tomci*(n: SomeNumber|char|enum): mcint = n.cint
 converter tomcu*(n: SomeInteger): mcuint = n.cuint
 converter tomcf*(n: SomeInteger): mcfloat = n.cfloat
-converter tomcstr*(s: string|array|seq[byte]): mcstring = cast[mcstring](s[0].addr)
+converter tomcstr*[I;T=byte](s: string|array[I,T]|seq[T]): mcstring = cast[mcstring](s[0].addr)
+converter toAddr*[I;T](a: array[I,T]|seq[T]): ptr T = a[0].addr
+
 
 type
   PVec2* = ptr Vec2

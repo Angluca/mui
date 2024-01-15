@@ -1,14 +1,11 @@
 include renderer
 import std/strutils
-
-type State = tuple
+var
   ctx_src: mu.Context
-  ctx: mu.PContext
+  ctx = ctx_src.addr # PContext
   logbuf: string
   logbuf_updated: bool
   bg: tuple[r,g,b: float32] = (90.0f, 95.0f, 100.0f)
-var state: State
-state.ctx = state.ctx_src.addr
 
 proc test_window(ctx: mu.PContext)
 proc log_window(ctx: mu.PContext)
@@ -23,10 +20,10 @@ proc text_height_cb(font: mu.Font): cint {.cdecl.} =
   r_get_text_height()
 
 proc wlog(text: cstring) =
-  if state.logbuf.len > 2048: state.logbuf.setLen(0)
-  if state.logbuf.len > 0: state.logbuf.add('\n')
-  state.logbuf.add(text)
-  state.logbuf_updated = true
+  if logbuf.len > 2048: logbuf.setLen(0)
+  if logbuf.len > 0: logbuf.add('\n')
+  logbuf.add(text)
+  logbuf_updated = true
 
 proc init {.cdecl.} =
   sg.setup(sg.Desc(
@@ -38,9 +35,9 @@ proc init {.cdecl.} =
   ))
 
   r_init()
-  mu.init(state.ctx)
-  state.ctx.text_width = text_width_cb
-  state.ctx.text_height = text_height_cb
+  mu.init(ctx)
+  ctx.text_width = text_width_cb
+  ctx.text_height = text_height_cb
 
 proc `[]=`(arr: var openArray[int] ; key: sapp.Keycode; val: SomeNumber) =
   arr[key.int] = val.int
@@ -57,32 +54,32 @@ key_map[sapp.keyCodeBackspace] = mu.KEY_BACKSPACE
 proc event(ev: ptr Event) {.cdecl.} =
   case ev.`type`:
   of eventtypeMouseDown:
-    input_mousedown(state.ctx, ev.mouseX.int, ev.mouseY.int, (1 shl ev.mouseButton))
+    input_mousedown(ctx, ev.mouseX.int, ev.mouseY.int, (1 shl ev.mouseButton))
   of eventtypeMouseUp:
-    input_mouseup(state.ctx, ev.mouseX.int, ev.mouseY.int, (1 shl ev.mouseButton))
+    input_mouseup(ctx, ev.mouseX.int, ev.mouseY.int, (1 shl ev.mouseButton))
   of eventtypeMouseMove:
-    input_mousemove(state.ctx, ev.mouseX.int, ev.mouseY.int)
+    input_mousemove(ctx, ev.mouseX.int, ev.mouseY.int)
   of eventtypeMouseScroll:
-    input_scroll(state.ctx, 0,  ev.scrollY.int)
+    input_scroll(ctx, 0,  ev.scrollY.int)
   of eventtypeKeydown:
-    input_keydown(state.ctx, key_map[ev.keyCode.int and 511])
+    input_keydown(ctx, key_map[ev.keyCode.int and 511])
   of eventtypeKeyup:
-    input_keyup(state.ctx, key_map[ev.keyCode.int and 511])
+    input_keyup(ctx, key_map[ev.keyCode.int and 511])
   of eventtypeChar:
     if ev.charCode != 127:
-      input_text(state.ctx, [ev.charCode.byte and 255, 0])
+      input_text(ctx, [ev.charCode.byte and 255, 0])
   else: discard
 
 proc frame {.cdecl.} =
-  mu.begin(state.ctx)
-  test_window(state.ctx)
-  log_window(state.ctx)
-  style_window(state.ctx)
-  mu.end(state.ctx)
+  mu.begin(ctx)
+  test_window(ctx)
+  log_window(ctx)
+  style_window(ctx)
+  mu.end(ctx)
 
   r_begin(sapp.width(), sapp.height())
   var cmd: mu.PCommand
-  while state.ctx.next_command(cmd.addr)!=0:
+  while ctx.next_command(cmd.addr)!=0:
     case cmd.type:
     of COMMAND_TEXT: r_draw_text(cmd.text.str, cmd.text.pos, cmd.text.color)
     of COMMAND_RECT: r_draw_rect(cmd.rect.rect, cmd.rect.color)
@@ -93,7 +90,7 @@ proc frame {.cdecl.} =
 
   var pa: sg.PassAction
   pa.colors[0].loadAction = loadActionClear
-  pa.colors[0].clearValue = sg.Color(r: state.bg.r / 255.0f, g: state.bg.g / 255.0f, b: state.bg.b / 255.0f, a: 1.0f)
+  pa.colors[0].clearValue = sg.Color(r: bg.r / 255.0f, g: bg.g / 255.0f, b: bg.b / 255.0f, a: 1.0f)
   beginDefaultPass(pa, sapp.width(), sapp.height())
 
   r_draw()
@@ -114,7 +111,7 @@ proc test_window(ctx: PContext) =
 
     if ctx.header("Window Info")!=0:
       win = get_current_container(ctx)
-      ctx.layout_row(2,[54, -1], 0)
+      ctx.layout_row(2,[54.cint, -1], 0)
       ctx.label("Position:")
       var buf = "$#, $#" % [$win.rect.x, $win.rect.y]; ctx.label(buf.cstring)
       ctx.label("Size:")
@@ -122,7 +119,7 @@ proc test_window(ctx: PContext) =
 
     # lable + buttons
     if ctx.header_ex("Test buttons", OPT_EXPANDED)!=0:
-      ctx.layout_row(3, [86, -110, -1], 0)
+      ctx.layout_row(3, [86.cint, -110, -1], 0)
       ctx.label("Test btn 1:")
       if ctx.button("btn1:")!=0: wlog("Press btn1")
       if ctx.button("btn2:")!=0: wlog("Press btn2")
@@ -136,7 +133,7 @@ proc test_window(ctx: PContext) =
 
     # tree
     if ctx.header_ex("Tree and text", OPT_EXPANDED)!=0:
-      ctx.layout_row(2, [140, -1], 0)
+      ctx.layout_row(2, [140.cint, -1], 0)
       ctx.layout_begin_column()
       if ctx.begin_treenode("test 1")!=0:
         if ctx.begin_treenode("test 1a")!=0:
@@ -150,7 +147,7 @@ proc test_window(ctx: PContext) =
         ctx.end_treenode()
 
       if ctx.begin_treenode("test 2")!=0:
-        ctx.layout_row(2, [54, 54], 0)
+        ctx.layout_row(2, [54.cint, 54], 0)
         if ctx.button("tbtn3:")!=0: wlog("Press tbtn3")
         if ctx.button("tbtn4:")!=0: wlog("Press tbtn4")
         if ctx.button("tbtn5:")!=0: wlog("Press tbtn5")
@@ -158,7 +155,7 @@ proc test_window(ctx: PContext) =
         ctx.end_treenode()
 
       if ctx.begin_treenode("test 3")!=0:
-        var chks{.global.} = [1, 0, 1]
+        var chks{.global.} = [1.cint, 0, 1]
         discard ctx.checkbox("chkbox1", chks[0].addr)
         discard ctx.checkbox("chkbox1", chks[1].addr)
         discard ctx.checkbox("chkbox1", chks[2].addr)
@@ -166,24 +163,26 @@ proc test_window(ctx: PContext) =
       ctx.layout_end_column()
 
       ctx.layout_begin_column()
-      ctx.layout_row(1, [-1], 0)
-      ctx.text("Lorem ipsum dolor sit amet, consectetur adipiscing \nelit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus \nipsum, eu varius magna felis a nulla.")
+      ctx.layout_row(1, [-1.cint], 0)
+      ctx.text("""Lorem ipsum dolor sit amet, consectetur adipiscing
+      elit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus
+      ipsum, eu varius magna felis a nulla.""")
       ctx.layout_end_column()
 
     # backgroud color sliders
     if ctx.header_ex("Background color", OPT_EXPANDED)!=0:
-      ctx.layout_row(2, [-78, -1], 74)
+      ctx.layout_row(2, [-78.cint, -1], 74)
       # sliders
       ctx.layout_begin_column()
-      ctx.layout_row(2, [46, -1], 0)
-      ctx.label("Red:"); discard ctx.slider(state.bg.r.addr, 0, 255)
-      ctx.label("Green:"); discard ctx.slider(state.bg.g.addr, 0, 255)
-      ctx.label("Blue:"); discard ctx.slider(state.bg.b.addr, 0, 255)
+      ctx.layout_row(2, [46.cint, -1], 0)
+      ctx.label("Red:"); discard ctx.slider(bg.r.addr, 0, 255)
+      ctx.label("Green:"); discard ctx.slider(bg.g.addr, 0, 255)
+      ctx.label("Blue:"); discard ctx.slider(bg.b.addr, 0, 255)
       ctx.layout_end_column()
 
       # color preview
       var r = ctx.layout_next()
-      var bg = state.bg
+      var bg = bg
       ctx.draw_rect(r, mu.color(bg.r, bg.g, bg.b, 255))
       var buf = "$#, $#, $#" % [$bg.r, $bg.g, $bg.b]
       ctx.draw_control_text(buf.cstring, r, COLOR_TEXT, OPT_ALIGNCENTER)
@@ -193,20 +192,20 @@ proc test_window(ctx: PContext) =
 proc log_window(ctx: PContext) =
   if ctx.begin_window("Log window", mu.rect(350, 0, 300, 200))!=0:
     # output text panel
-    ctx.layout_row(1, [-1], -25)
+    ctx.layout_row(1, [-1.cint], -25)
     ctx.begin_panel("Log output")
     var panel = ctx.get_current_container()
-    ctx.layout_row(1, [-1], -1)
-    ctx.text(state.logbuf.cstring)
+    ctx.layout_row(1, [-1.cint], -1)
+    ctx.text(logbuf.cstring)
     ctx.end_panel()
-    if state.logbuf_updated:
+    if logbuf_updated:
       panel.scroll.y = panel.content_size.y
-      state.logbuf_updated = false
+      logbuf_updated = false
     # input textbox + submit button
     var
       buf {.global.}: array[128, char]
       isSubmitted = false
-    ctx.layout_row(2, [-70, -1], 0)
+    ctx.layout_row(2, [-70.cint, -1], 0)
     if (ctx.textbox(buf, buf.len) and RES_SUBMIT)!=0:
       ctx.set_focus(ctx.last_id)
       isSubmitted = true
@@ -218,11 +217,11 @@ proc log_window(ctx: PContext) =
     ctx.end_window()
   discard
 
-proc uint8_slider(ctx: PContext, val: ptr uint8, low:int, high:int): int {.discardable.} =
+proc uint8_slider(ctx: PContext, val: ptr uint8, low, high:cint): cint {.discardable.} =
   var tmp {.global.}: Real
   ctx.push_id(val.addr, sizeof(val))
   tmp = val[].Real
-  result = ctx.slider_ex(tmp.addr, low, high, 0, "%.0f", OPT_ALIGNCENTER)
+  result = ctx.slider_ex(tmp.addr, low.Real, high.Real, 0, "%.0f", OPT_ALIGNCENTER)
   val[] = tmp.uint8
   ctx.pop_id()
 
@@ -244,8 +243,8 @@ proc style_window(ctx: PContext) =
   ("scrollthumb:",  COLOR_SCROLLTHUMB)]
 
   if ctx.begin_window("Style editor", mu.rect(350, 200, 300, 240))!=0:
-    var sw = (ctx.get_current_container().body.w.float * 0.14).cint
-    ctx.layout_row(6, [80, sw, sw, sw, sw, -1], 0)
+    var sw = (ctx.get_current_container().body.w * 0.14).cint
+    ctx.layout_row(6, [80.cint, sw, sw, sw, sw, -1], 0)
     for i, val in colors:
       ctx.label(val.label.cstring)
       uint8_slider(ctx, ctx.style.colors[i].r.addr, 0, 255)
