@@ -8,9 +8,12 @@ installDirs = @["src"]
 
 # Dependencies
 requires "nim >= 1.6.6"
-requires "sokol"
+#requires "sokol"
 #requires "sdl2"
 #requires "opengl"
+
+taskRequires "test", "sokol"
+taskRequires "demo", "sokol"
 
 task demo, "Run demo":
   withDir "demo/":

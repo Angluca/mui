@@ -24,7 +24,7 @@ proc test_window(ctx: PContext) =
     # window info
     if ctx.header("win info")!=0:
       win = get_current_container(ctx)
-      ctx.layout_row(2,[54, -1], 0)
+      ctx.layout_row(2,[54.cint, -1], 0)
       ctx.label("position:")
       buf = $win.rect.x & "," & $win.rect.y
       ctx.label(buf.cstring)
@@ -34,7 +34,7 @@ proc test_window(ctx: PContext) =
 
     # lable + buttons
     if ctx.header_ex("test buttons", OPT_EXPANDED)!=0:
-      ctx.layout_row(3, [86, -110, -1], 0)
+      ctx.layout_row(3, [86.cint, -110, -1], 0)
       ctx.label("test btn1:")
       if ctx.button("btn1:")!=0: wlog("pres btn1")
       if ctx.button("btn2:")!=0: wlog("pres btn2")
@@ -48,7 +48,7 @@ proc test_window(ctx: PContext) =
 
     # tree
     if ctx.header_ex("tree and text", OPT_EXPANDED)!=0:
-      ctx.layout_row(2, [140, -1], 0)
+      ctx.layout_row(2, [140.cint, -1], 0)
       ctx.layout_begin_column()
       if ctx.begin_treenode("test 1")!=0:
         if ctx.begin_treenode("test 1a")!=0:
@@ -62,7 +62,7 @@ proc test_window(ctx: PContext) =
         ctx.end_treenode()
 
       if ctx.begin_treenode("test 2")!=0:
-        ctx.layout_row(2, [54, 54], 0)
+        ctx.layout_row(2, [54.cint, 54], 0)
         if ctx.button("tbtn3:")!=0: wlog("pres tbtn3")
         if ctx.button("tbtn4:")!=0: wlog("pres tbtn4")
         if ctx.button("tbtn5:")!=0: wlog("pres tbtn5")
@@ -70,7 +70,7 @@ proc test_window(ctx: PContext) =
         ctx.end_treenode()
 
       if ctx.begin_treenode("test 3")!=0:
-        var chks{.global.} = [1, 0, 1]
+        var chks{.global.} = [1.cint, 0, 1]
         discard ctx.checkbox("chkbox1", chks[0].addr)
         discard ctx.checkbox("chkbox1", chks[1].addr)
         discard ctx.checkbox("chkbox1", chks[2].addr)
@@ -78,16 +78,16 @@ proc test_window(ctx: PContext) =
       ctx.layout_end_column()
 
       ctx.layout_begin_column()
-      ctx.layout_row(1, [-1], 0)
+      ctx.layout_row(1, [-1.cint], 0)
       ctx.text("Lorem ipsum dolor sit amet, consectetur adipiscing \nelit. Maecenas lacinia, sem eu lacinia molestie, mi risus faucibus \nipsum, eu varius magna felis a nulla.")
       ctx.layout_end_column()
 
     # backgroud color sliders
     if ctx.header_ex("bg color", OPT_EXPANDED)!=0:
-      ctx.layout_row(2, [-78, -1], 74)
+      ctx.layout_row(2, [-78.cint, -1], 74)
       # sliders
       ctx.layout_begin_column()
-      ctx.layout_row(2, [46, -1], 0)
+      ctx.layout_row(2, [46.cint, -1], 0)
       ctx.label("red:"); discard ctx.slider(bg[0].addr, 0, 255)
       ctx.label("green:"); discard ctx.slider(bg[1].addr, 0, 255)
       ctx.label("blue:"); discard ctx.slider(bg[2].addr, 0, 255)
@@ -103,10 +103,10 @@ proc test_window(ctx: PContext) =
 proc log_window(ctx: PContext) =
   if ctx.begin_window("log win", mu.rect(350, 40, 300, 200))!=0:
     # output text panel
-    ctx.layout_row(1, [-1], -25)
+    ctx.layout_row(1, [-1.cint], -25)
     ctx.begin_panel("log output")
     var panel = ctx.get_current_container()
-    ctx.layout_row(1, [-1], -1)
+    ctx.layout_row(1, [-1.cint], -1)
     ctx.text(logbuf.cstring)
     ctx.end_panel()
     if logbuf_updated:
@@ -116,7 +116,7 @@ proc log_window(ctx: PContext) =
     var
       buf {.global.}: array[128, char]
       bsub = false
-    ctx.layout_row(2, [-70, -1], 0)
+    ctx.layout_row(2, [-70.cint, -1], 0)
     if (ctx.textbox(buf, buf.high) and RES_SUBMIT)!=0:
       ctx.set_focus(ctx.last_id)
       bsub = true
@@ -140,8 +140,8 @@ proc style_window(ctx: PContext) =
   const colors = [ "text:", "border:", "windowbg:", "titlebg:", "titletext:", "panelbg:", "button:", "buttonhover:", "buttonfocus:", "base:", "basehover:", "basefocus:", "scrollbase:", "scrollthumb:" ]
   if ctx.begin_window("style editor", mu.rect(350, 250, 300, 240))!=0:
     var
-      sw = (ctx.get_current_container().body.w.float * 0.14).cint
-    ctx.layout_row(6, [80, sw, sw, sw, sw, -1], 0)
+      sw = (ctx.get_current_container().body.w.float32 * 0.14).cint
+    ctx.layout_row(6, [80.cint, sw, sw, sw, sw, -1], 0)
     for i, v in colors:
       ctx.label(v)
       uint8_slider(ctx, ctx.style.colors[i].r.addr, 0, 255)

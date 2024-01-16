@@ -118,7 +118,7 @@ of the row:
 ```nim
 #[ initialise a row of 3 items: the first item with a width
 ** of 90 and the remaining two with the width of 100 ]#
-mu.layout_row(ctx, 3, [90, 100, 100], 0)
+mu.layout_row(ctx, 3, [90.cint, 100, 100], 0)
 
 ```
 When a row is filled the next row is started, for example, in the above
@@ -131,7 +131,7 @@ negative value which will size the item relative to the right/bottom edge,
 thus if we wanted a row with a small button at the left, a textbox filling
 most the row and a larger button at the right, we could do the following:
 ```nim
-mu.layout_row(ctx, 3, [30, -90, -1], 0)
+mu.layout_row(ctx, 3, [30.cint, -90, -1], 0)
 mu.button(ctx, "X")
 mu.textbox(ctx, buf, buf.len)
 mu.button(ctx, "Submit")

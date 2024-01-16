@@ -23,7 +23,7 @@ nimble test
 ```nim
 #if ctx.begin_window("My Window", mu.Rect(x:10, y:10, w:140, h:86))!=0:
 if ctx.begin_window("My Window", mu.rect(10, 10, 140, 86))!=0:
-  ctx.layout_row(2, [60, -1], 0)
+  ctx.layout_row(2, [60.cint, -1], 0)
 
   ctx.label("First:")
   if button(ctx, "Button1")!=0: # c call func

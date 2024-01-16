@@ -348,8 +348,8 @@ proc end_panel*(ctx: ptr Context) {.cdecl, importc: "mu_end_panel", mui.}
 converter tomci*(n: SomeNumber|char|enum): mcint = n.cint
 converter tomcu*(n: SomeInteger): mcuint = n.cuint
 converter tomcf*(n: SomeInteger): mcfloat = n.cfloat
-converter tomcstr*[I;T=byte](s: string|array[I,T]|seq[T]): mcstring = cast[mcstring](s[0].addr)
-converter toAddr*[I;T](a: array[I,T]|seq[T]): ptr T = a[0].addr
+converter tomcstr*[I;T=byte](s: var string|array[I,T]|seq[T]): mcstring = cast[mcstring](s[0].addr)
+converter toAddr*[I;T](a: var array[I,T]|seq[T]): ptr T = a[0].addr
 
 
 type

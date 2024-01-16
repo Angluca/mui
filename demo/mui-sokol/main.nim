@@ -1,5 +1,6 @@
 include renderer
-import std/strutils
+import std/strformat
+
 var
   ctx_src: mu.Context
   ctx = ctx_src.addr # PContext
@@ -113,9 +114,9 @@ proc test_window(ctx: PContext) =
       win = get_current_container(ctx)
       ctx.layout_row(2,[54.cint, -1], 0)
       ctx.label("Position:")
-      var buf = "$#, $#" % [$win.rect.x, $win.rect.y]; ctx.label(buf.cstring)
+      var buf = &"{win.rect.x}, {win.rect.y}"; ctx.label(buf.cstring)
       ctx.label("Size:")
-      buf = "$#, $#" % [$win.rect.w, $win.rect.h]; ctx.label(buf.cstring)
+      buf = &"{win.rect.w}, {win.rect.h}"; ctx.label(buf.cstring)
 
     # lable + buttons
     if ctx.header_ex("Test buttons", OPT_EXPANDED)!=0:
@@ -182,9 +183,8 @@ proc test_window(ctx: PContext) =
 
       # color preview
       var r = ctx.layout_next()
-      var bg = bg
       ctx.draw_rect(r, mu.color(bg.r, bg.g, bg.b, 255))
-      var buf = "$#, $#, $#" % [$bg.r, $bg.g, $bg.b]
+      var buf = &"#{bg.r.int:02X}{bg.g.int:02X}{bg.b.int:02X}"
       ctx.draw_control_text(buf.cstring, r, COLOR_TEXT, OPT_ALIGNCENTER)
     ctx.end_window()
   discard
