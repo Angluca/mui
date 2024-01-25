@@ -31,7 +31,7 @@ proc r_init =
   sp.colors[0].blend = sg.BlendState(enabled: true, srcFactorRgb: blendFactorSrcAlpha, dstFactorRgb: blendFactorOneMinusSrcAlpha)
   pip = sgl.makePipeline(sp)
 
-proc r_begin(dw, dh: int) =
+proc r_begin(dw, dh: cint) =
   sgl.defaults()
   sgl.pushPipeline()
   sgl.loadPipeline(pip)
@@ -39,7 +39,7 @@ proc r_begin(dw, dh: int) =
   sgl.texture(atlas_img, atlas_smp)
   sgl.matrixModeProjection()
   sgl.pushMatrix()
-  sgl.ortho(0.0f, dw.float, dh.float, 0.0f, -1.0f, 1.0f)
+  sgl.ortho(0.0f, dw.float32, dh.float32, 0.0f, -1.0f, 1.0f)
   sgl.beginQuads()
 
 proc r_end =
@@ -52,14 +52,14 @@ proc r_draw =
 
 proc r_push_quad(dst, src: mu.Rect, color: mu.Color) =
   let
-    u0 = src.x.float / ATLAS_WIDTH.float
-    v0 = src.y.float / ATLAS_HEIGHT.float
-    u1 = (src.x + src.w).float / ATLAS_WIDTH.float
-    v1 = (src.y + src.h).float / ATLAS_HEIGHT.float
-    x0 = dst.x.float
-    y0 = dst.y.float
-    x1 = (dst.x + dst.w).float
-    y1 = (dst.y + dst.h).float
+    u0 = src.x.float32 / ATLAS_WIDTH.float32
+    v0 = src.y.float32 / ATLAS_HEIGHT.float32
+    u1 = (src.x + src.w).float32 / ATLAS_WIDTH.float32
+    v1 = (src.y + src.h).float32 / ATLAS_HEIGHT.float32
+    x0 = dst.x.float32
+    y0 = dst.y.float32
+    x1 = (dst.x + dst.w).float32
+    y1 = (dst.y + dst.h).float32
 
   sgl.c4b(color.r, color.g, color.b, color.a)
   sgl.v2fT2f(x0, y0, u0, v0)
@@ -74,9 +74,9 @@ proc r_draw_text(text: cstring, pos: mu.Vec2, color: mu.Color) =
   var dst = mu.rect(pos.x, pos.y, 0, 0)
   for i, d in text:
     var src = atlas[ATLAS_FONT + d.int]
-    #if (d and 0xc0) == 0x80: continue
-    #let chr = min(d, 127.char)
-    #var src = atlas[ATLAS_FONT + chr]
+    #if (d.int and 0xc0) == 0x80: continue
+    #let ord = min(d.int, 127)
+    #var src = atlas[ATLAS_FONT + ord]
     dst.w = src.w
     dst.h = src.h
     r_push_quad(dst, src, color)
@@ -93,8 +93,8 @@ proc r_get_text_width(text: cstring, len: cint): cint =
   for i in 0..<len:
     result += atlas[ATLAS_FONT + text[i].int].w
     #if (text[i] and 0xc0) == 0x80: continue
-    #var chr = min(text[i], 127.char)
-    #result += atlas[ATLAS_FONT + chr].w
+    #var ord = min(text[i].int, 127)
+    #result += atlas[ATLAS_FONT + ord].w
 
 proc r_get_text_height: cint = 18
 

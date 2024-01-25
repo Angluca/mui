@@ -14,7 +14,7 @@ proc style_window(ctx: mu.PContext)
 
 proc text_width_cb(font: mu.Font, text: cstring, len: cint): cint {.cdecl.} =
   var n = len
-  if n == -1: n = text.len
+  if n == -1: n = text.len.cint
   return r_get_text_width(text, n)
 
 proc text_height_cb(font: mu.Font): cint {.cdecl.} =
@@ -40,9 +40,9 @@ proc init {.cdecl.} =
   ctx.text_width = text_width_cb
   ctx.text_height = text_height_cb
 
-proc `[]=`(arr: var openArray[int] ; key: sapp.Keycode; val: SomeNumber) =
-  arr[key.int] = val.int
-var key_map: array[512, int]
+proc `[]=`(arr: var openArray[cint] ; key: sapp.Keycode; val: SomeNumber) =
+  arr[key.cint] = val.cint
+var key_map: array[512, cint]
 key_map[sapp.keyCodeLeftShift] = mu.KEY_SHIFT
 key_map[sapp.keyCodeRightShift] = mu.KEY_SHIFT
 key_map[sapp.keyCodeLeftControl] = mu.KEY_CTRL
@@ -55,17 +55,17 @@ key_map[sapp.keyCodeBackspace] = mu.KEY_BACKSPACE
 proc event(ev: ptr Event) {.cdecl.} =
   case ev.`type`:
   of eventtypeMouseDown:
-    input_mousedown(ctx, ev.mouseX.int, ev.mouseY.int, (1 shl ev.mouseButton))
+    input_mousedown(ctx, ev.mouseX.cint, ev.mouseY.cint, (1 shl ev.mouseButton).cint)
   of eventtypeMouseUp:
-    input_mouseup(ctx, ev.mouseX.int, ev.mouseY.int, (1 shl ev.mouseButton))
+    input_mouseup(ctx, ev.mouseX.cint, ev.mouseY.cint, (1 shl ev.mouseButton).cint)
   of eventtypeMouseMove:
-    input_mousemove(ctx, ev.mouseX.int, ev.mouseY.int)
+    input_mousemove(ctx, ev.mouseX.cint, ev.mouseY.cint)
   of eventtypeMouseScroll:
-    input_scroll(ctx, 0,  ev.scrollY.int)
+    input_scroll(ctx, 0,  ev.scrollY.cint)
   of eventtypeKeydown:
-    input_keydown(ctx, key_map[ev.keyCode.int and 511])
+    input_keydown(ctx, key_map[ev.keyCode and 511])
   of eventtypeKeyup:
-    input_keyup(ctx, key_map[ev.keyCode.int and 511])
+    input_keyup(ctx, key_map[ev.keyCode and 511])
   of eventtypeChar:
     if ev.charCode != 127:
       input_text(ctx, [ev.charCode.byte and 255, 0])
@@ -183,7 +183,7 @@ proc test_window(ctx: PContext) =
 
       # color preview
       var r = ctx.layout_next()
-      ctx.draw_rect(r, mu.color(bg.r, bg.g, bg.b, 255))
+      ctx.draw_rect(r, mu.color(bg.r.cint, bg.g.cint, bg.b.cint, 255))
       var buf = &"#{bg.r.int:02X}{bg.g.int:02X}{bg.b.int:02X}"
       ctx.draw_control_text(buf.cstring, r, COLOR_TEXT, OPT_ALIGNCENTER)
     ctx.end_window()
@@ -243,7 +243,7 @@ proc style_window(ctx: PContext) =
   ("scrollthumb:",  COLOR_SCROLLTHUMB)]
 
   if ctx.begin_window("Style editor", mu.rect(350, 200, 300, 240))!=0:
-    var sw = (ctx.get_current_container().body.w * 0.14).cint
+    var sw = (ctx.get_current_container().body.w.float32 * 0.14f).cint
     ctx.layout_row(6, [80.cint, sw, sw, sw, sw, -1], 0)
     for i, val in colors:
       ctx.label(val.label.cstring)
@@ -264,7 +264,8 @@ proc main =
     width: 720,
     height: 540,
     windowTitle: "mui + sokol-nim",
-    icon: IconDesc(sokol_default: true),
+    #icon: IconDesc(sokol_default: true),
+    icon: IconDesc(sokol_default: false, images: [sapp.ImageDesc(width:ATLAS_WIDTH, height:ATLAS_HEIGHT, pixels: sapp.Range(addr: atlas_texture.addr, size: atlas_texture.len))]),
     logger: sapp.Logger(fn: slog.fn),
   ))
 

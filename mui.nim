@@ -26,7 +26,6 @@ const
 
 type
   mcint = cint
-  mcuint = cuint
   mcfloat = cfloat
   mcstring = cstring
 const
@@ -114,7 +113,7 @@ const
 {.push warnings: off.}
 
 type
-  Id* = mcuint
+  Id* = mcint
   Real* = mcfloat
   Font* = pointer
   Vec2* {.importc: "mu_Vec2", mui, bycopy.} = object
@@ -227,7 +226,7 @@ type
     next_hover_root* {.importc: "next_hover_root".}: ptr Container
     scroll_target* {.importc: "scroll_target".}: ptr Container
     number_edit_buf* {.importc: "number_edit_buf".}: array[MAX_FMT, char]
-    number_edit* {.importc: "number_edit".}: Id ##  stacks
+    number_edit* {.importc: "number_edit".}: Id
     command_list* {.importc: "command_list".}: Stack(char, COMMANDLIST_SIZE)
     root_list* {.importc: "root_list".}: Stack(ptr Container, ROOTLIST_SIZE)
     container_stack* {.importc: "container_stack".}: Stack(ptr Container, CONTAINERPOOL_SIZE)
@@ -345,12 +344,11 @@ proc begin_panel_ex*(ctx: ptr Context; name: mcstring; opt: mcint) {.cdecl, impo
 proc end_panel*(ctx: ptr Context) {.cdecl, importc: "mu_end_panel", mui.}
 
 #converts
-converter tomci*(n: SomeNumber|char|enum): mcint = n.cint
-converter tomcu*(n: SomeInteger): mcuint = n.cuint
-converter tomcf*(n: SomeInteger): mcfloat = n.cfloat
-converter tomcstr*[I;T=byte](s: var string|array[I,T]|seq[T]): mcstring = cast[mcstring](s[0].addr)
-converter toAddr*[I;T](a: var array[I,T]|seq[T]): ptr T = a[0].addr
-
+converter tomci*(n: SomeInteger|enum): mcint = n.cint
+converter tomcstr*(s: var string|array|seq[byte]):
+  mcstring = cast[mcstring](s[0].addr)
+converter toAddr*(a: var array|seq[cint]): ptr mcint = a[0].addr
+#converter toAddr*[I;T](a: var array[I,T]|seq[T]): ptr T = a[0].addr
 
 type
   PVec2* = ptr Vec2
